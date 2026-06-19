@@ -115,26 +115,28 @@
     font-family:'Prompt',sans-serif;font-weight:500;font-size:19px;
     background:#fff;border:1.6px solid var(--line);border-radius:14px;
     padding:15px 16px;cursor:pointer;text-align:left;
-    display:flex;align-items:center;gap:12px;
+    display:flex;align-items:stretch;gap:12px;
     transition:border-color .15s, background .15s, transform .06s;
   }
   .choice:active{transform:scale(.99)}
-  .choice .ctxt{flex:1 1 auto}
+  .choice .ctxt{flex:1 1 auto;align-self:center}
   .choice .looped{
-    flex:0 0 auto;font-family:'Sarabun',sans-serif;font-weight:500;
-    font-size:23px;line-height:1;color:inherit;
-    max-width:0;opacity:0;overflow:hidden;white-space:nowrap;
-    transition:max-width .3s ease, opacity .25s ease, margin .3s ease;
-    margin-left:0;padding-left:0;
+    display:none;flex:0 0 auto;align-self:stretch;align-items:center;
+    font-family:'Sarabun',sans-serif;font-weight:600;
+    font-size:22px;line-height:1;color:inherit;white-space:nowrap;
+    padding:4px 12px;border-radius:9px;
+    position:relative;margin-left:8px;
   }
-  .choice .looped.show{
-    max-width:160px;opacity:1;margin-left:10px;padding-left:12px;
-    border-left:1.5px dashed currentColor;
+  .choice .looped.show{display:inline-flex}
+  /* full-height divider drawn as a solid bar, always visible on mobile */
+  .choice .looped.show::before{
+    content:"";position:absolute;left:-8px;top:6px;bottom:6px;
+    width:2px;border-radius:2px;background:currentColor;opacity:.45;
   }
-  .choice.correct .looped{color:var(--good-dk,#0a6359)}
-  .choice.wrong .looped{color:var(--bad)}
+  .choice.correct .looped{color:var(--good-dk,#0a6359);background:rgba(15,138,125,.10)}
+  .choice.wrong .looped{color:var(--bad);background:rgba(231,84,63,.10)}
   .choice .dot{
-    width:24px;height:24px;border-radius:50%;flex:0 0 auto;
+    width:24px;height:24px;border-radius:50%;flex:0 0 auto;align-self:center;
     border:1.6px solid var(--line);display:grid;place-items:center;
     font-size:12px;font-weight:700;color:var(--muted);
     font-family:'Prompt',sans-serif;
