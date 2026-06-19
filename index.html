@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Loopless Font Master — Thai Reading Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b2433;
+    --paper:#f5f1e8;
+    --card:#ffffff;
+    --line:#e3ddcd;
+    --teal:#0f8a7d;
+    --teal-dk:#0a6359;
+    --coral:#e7543f;
+    --gold:#e0a92e;
+    --muted:#7d8597;
+    --good:#0f8a7d;
+    --good-bg:#e3f4f0;
+    --bad:#e7543f;
+    --bad-bg:#fce8e4;
+    --shadow:0 10px 30px rgba(27,36,51,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:'Sarabun',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #fbf7ee 0%, transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    min-height:100dvh;
+    display:flex;align-items:flex-start;justify-content:center;
+    padding:18px 16px 40px;
+  }
+  .wrap{width:100%;max-width:480px}
+
+  /* Header */
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .brand{display:flex;flex-direction:column;line-height:1}
+  .brand .eyebrow{
+    font-family:'Prompt',sans-serif;font-weight:600;font-size:11px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--teal-dk);
+  }
+  .brand .ttl{
+    font-family:'Prompt',sans-serif;font-weight:600;font-size:17px;
+    margin-top:5px;color:var(--ink);
+  }
+  .badge{
+    font-family:'Prompt',sans-serif;font-weight:600;font-size:10px;
+    letter-spacing:.03em;
+    color:var(--teal-dk);background:#fff;border:1px solid var(--line);
+    padding:7px 11px;border-radius:999px;white-space:nowrap;
+  }
+
+  /* Stats bar */
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;
+  }
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:11px 10px;text-align:center;
+  }
+  .stat .k{
+    font-family:'Prompt',sans-serif;font-size:10px;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  }
+  .stat .v{
+    font-family:'Prompt',sans-serif;font-weight:700;font-size:22px;margin-top:3px;
+  }
+  .stat .v small{font-size:13px;color:var(--muted);font-weight:500}
+  #streakStat .v{color:var(--gold)}
+  #scoreStat .v{color:var(--teal)}
+
+  /* progress */
+  .track{height:6px;background:#e9e3d4;border-radius:999px;overflow:hidden;margin-bottom:20px}
+  .track > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s ease}
+
+  /* Question card */
+  .qcard{
+    background:var(--card);border:1px solid var(--line);border-radius:22px;
+    box-shadow:var(--shadow);padding:26px 22px 22px;text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .qcard::before{
+    content:"";position:absolute;inset:0 0 auto 0;height:5px;
+    background:linear-gradient(90deg,var(--teal),var(--gold),var(--coral));
+  }
+  .prompt-label{
+    font-family:'Prompt',sans-serif;font-weight:500;font-size:12px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:14px;
+  }
+  .thai{
+    font-family:'Prompt',sans-serif;font-weight:500;
+    font-size:clamp(40px,12vw,60px);line-height:1.15;color:var(--ink);
+    word-break:break-word;margin:4px 0 6px;
+  }
+  .jp-hint{
+    font-size:13px;color:var(--muted);min-height:18px;margin-bottom:4px;
+    opacity:0;transition:opacity .25s;
+  }
+  .jp-hint.show{opacity:1}
+
+  /* Choices */
+  .choices{display:flex;flex-direction:column;gap:11px;margin-top:20px}
+  .choice{
+    font-family:'Prompt',sans-serif;font-weight:500;font-size:19px;
+    background:#fff;border:1.6px solid var(--line);border-radius:14px;
+    padding:15px 16px;cursor:pointer;text-align:left;
+    display:flex;align-items:center;gap:12px;
+    transition:border-color .15s, background .15s, transform .06s;
+  }
+  .choice:active{transform:scale(.99)}
+  .choice .ctxt{flex:1 1 auto}
+  .choice .looped{
+    flex:0 0 auto;font-family:'Sarabun',sans-serif;font-weight:500;
+    font-size:23px;line-height:1;color:inherit;
+    max-width:0;opacity:0;overflow:hidden;white-space:nowrap;
+    transition:max-width .3s ease, opacity .25s ease, margin .3s ease;
+    margin-left:0;padding-left:0;
+  }
+  .choice .looped.show{
+    max-width:160px;opacity:1;margin-left:10px;padding-left:12px;
+    border-left:1.5px dashed currentColor;
+  }
+  .choice.correct .looped{color:var(--good-dk,#0a6359)}
+  .choice.wrong .looped{color:var(--bad)}
+  .choice .dot{
+    width:24px;height:24px;border-radius:50%;flex:0 0 auto;
+    border:1.6px solid var(--line);display:grid;place-items:center;
+    font-size:12px;font-weight:700;color:var(--muted);
+    font-family:'Prompt',sans-serif;
+  }
+  .choice:hover:not(.locked){border-color:var(--teal)}
+  .choice.correct{background:var(--good-bg);border-color:var(--good)}
+  .choice.correct .dot{background:var(--good);border-color:var(--good);color:#fff}
+  .choice.wrong{background:var(--bad-bg);border-color:var(--bad)}
+  .choice.wrong .dot{background:var(--bad);border-color:var(--bad);color:#fff}
+  .choice.locked{cursor:default}
+  .choice.dim{opacity:.5}
+
+  /* feedback + next */
+  .feedback{
+    margin-top:16px;min-height:24px;font-size:14px;text-align:center;
+    font-weight:600;opacity:0;transition:opacity .2s;
+  }
+  .feedback.show{opacity:1}
+  .feedback.ok{color:var(--good)}
+  .feedback.no{color:var(--bad)}
+  .feedback .ans{font-family:'Prompt',sans-serif}
+  .feedback .fb-th{font-family:'Sarabun',sans-serif;font-weight:600;font-size:18px;margin-left:4px}
+  .feedback.ok .fb-th{color:var(--good-dk,#0a6359)}
+  .feedback.no .fb-th{color:var(--bad)}
+
+  .next{
+    width:100%;margin-top:16px;border:none;cursor:pointer;
+    font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;
+    color:#fff;background:var(--teal);border-radius:14px;padding:15px;
+    transition:background .15s, opacity .15s;
+  }
+  .next:hover{background:var(--teal-dk)}
+  .next:disabled{opacity:.4;cursor:not-allowed}
+
+  /* Result screen */
+  .result{
+    background:var(--card);border:1px solid var(--line);border-radius:22px;
+    box-shadow:var(--shadow);padding:30px 24px;text-align:center;
+  }
+  .result h2{
+    font-family:'Prompt',sans-serif;font-weight:600;font-size:20px;margin-bottom:6px;
+  }
+  .result .big{
+    font-family:'Prompt',sans-serif;font-weight:700;
+    font-size:56px;line-height:1;margin:14px 0 2px;color:var(--teal);
+  }
+  .result .pct{font-family:'Prompt',sans-serif;color:var(--muted);font-size:15px;margin-bottom:6px}
+  .result .verdict{font-size:15px;font-weight:600;margin:10px 0 18px}
+  .achieve{
+    background:linear-gradient(160deg,#fffaf0,#fdf3e3);
+    border:1px solid var(--line);border-radius:18px;
+    padding:22px 18px 20px;margin:0 0 22px;
+    box-shadow:inset 0 1px 0 #fff;
+  }
+  .achieve-icon{
+    font-size:64px;line-height:1;
+    animation:pop .55s cubic-bezier(.18,1.5,.4,1) both;
+  }
+  @keyframes pop{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+  .achieve-msg{
+    font-family:'Prompt',sans-serif;font-weight:700;font-size:19px;
+    margin-top:12px;color:var(--ink);line-height:1.35;
+  }
+  .achieve-sub{
+    font-size:13.5px;color:var(--muted);margin-top:7px;line-height:1.5;
+  }
+  .review{
+    text-align:left;border-top:1px dashed var(--line);padding-top:16px;margin-top:4px;
+  }
+  .review h3{
+    font-family:'Prompt',sans-serif;font-size:12px;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;
+  }
+  .miss{
+    display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);
+  }
+  .miss:last-child{border-bottom:none}
+  .miss .mth{font-family:'Prompt',sans-serif;font-weight:500;font-size:24px;min-width:64px}
+  .miss .mbody{flex:1;font-size:13px;line-height:1.5}
+  .miss .mbody .you{color:var(--bad)}
+  .miss .mbody .cor{color:var(--good);font-family:'Prompt',sans-serif;font-weight:600}
+  .miss .mbody .jp{color:var(--muted)}
+  .miss .mbody .rv-th{font-family:'Sarabun',sans-serif;font-weight:600;font-size:17px;margin-left:4px}
+  .miss .mbody .you-th{color:var(--bad)}
+  .miss .mbody .cor-th{color:var(--good)}
+  .perfect{font-size:15px;color:var(--good);font-weight:600;padding:8px 0}
+  .again{
+    width:100%;margin-top:22px;border:none;cursor:pointer;
+    font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;
+    color:#fff;background:var(--coral);border-radius:14px;padding:16px;
+  }
+  .again:hover{filter:brightness(.95)}
+  footer{text-align:center;margin-top:22px;font-size:11px;color:var(--muted);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="eyebrow">Thai Reading</span>
+      <span class="ttl">Loopless Font Master</span>
+    </div>
+    <span class="badge" id="poolBadge">Powered by Moonoi Monsoon</span>
+  </header>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="stats">
+      <div class="stat"><div class="k">Question</div><div class="v"><span id="qnum">1</span><small>/10</small></div></div>
+      <div class="stat" id="streakStat"><div class="k">Streak</div><div class="v" id="streak">0</div></div>
+      <div class="stat" id="scoreStat"><div class="k">Score</div><div class="v" id="score">0</div></div>
+    </div>
+    <div class="track"><i id="bar"></i></div>
+
+    <div class="qcard">
+      <div class="prompt-label">How do you read this?</div>
+      <div class="thai" id="thai">—</div>
+      <div class="jp-hint" id="jp"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next" id="next" disabled>Next →</button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="resultScreen" style="display:none">
+    <div class="result">
+      <h2>Quiz complete</h2>
+      <div class="big" id="finalScore">0</div>
+      <div class="pct" id="finalPct">0 / 10 · 0%</div>
+      <div class="verdict" id="verdict"></div>
+      <div class="achieve" id="achieve">
+        <div class="achieve-icon" id="achieveIcon">🍋</div>
+        <div class="achieve-msg" id="achieveMsg"></div>
+        <div class="achieve-sub" id="achieveSub"></div>
+      </div>
+      <div class="review" id="review"></div>
+      <button class="again" id="again">Play again</button>
+    </div>
+  </section>
+
+  <footer>
+    Loopless script reading · tell confusable letters apart<br>
+    Pronunciation: mid (a) · low (à) · falling (â) · high (á) · rising (ă)
+  </footer>
+</div>
+
+<script>
+/* ====== VOCAB DATA (Thai spelling + phonetic reading, L13–24) ====== */
+const VOCAB=[{"th": "ชอบ", "rd": "chɔ̂ɔp", "en": "to like"}, {"th": "แพ้", "rd": "phɛ́ɛ", "en": "to be allergic to"}, {"th": "เสื้อ", "rd": "sʉ̂ʉa", "en": "shirt / top"}, {"th": "เสื้อแขนยาว", "rd": "sʉ̂ʉa-khɛ̆ɛn-yaao", "en": "long-sleeve top"}, {"th": "เสื้อเชิ้ต", "rd": "sʉ̂ʉa-chə́ət", "en": "dress shirt"}, {"th": "เสื้อยืด", "rd": "sʉ̂ʉa-yʉ̂ʉt", "en": "T-shirt"}, {"th": "กางเกง", "rd": "gaang-geeng", "en": "trousers"}, {"th": "กระโปรง", "rd": "gra-bproong", "en": "skirt"}, {"th": "กระโปรงยาว", "rd": "gra-bproong-yaao", "en": "long skirt"}, {"th": "สร้อยคอ", "rd": "sɔ̂ɔi-khɔɔ", "en": "necklace"}, {"th": "สร้อยข้อมือ", "rd": "sɔ̂ɔi-khɔ̂ɔ-mʉʉ", "en": "bracelet"}, {"th": "แหวน", "rd": "wɛ̆ɛn", "en": "ring"}, {"th": "กำไล", "rd": "gam-lai", "en": "bangle"}, {"th": "แว่น", "rd": "wɛ̂n", "en": "glasses"}, {"th": "แว่นกันแดด", "rd": "wɛ̂n-gan-dɛ̀ɛt", "en": "sunglasses"}, {"th": "ดูดี", "rd": "duu-dii", "en": "to look good"}, {"th": "เชย", "rd": "chəəi", "en": "old-fashioned"}, {"th": "แพง", "rd": "phɛɛng", "en": "expensive"}, {"th": "พอดี", "rd": "phɔɔ-dii", "en": "to fit just right"}, {"th": "เงิน", "rd": "ngən", "en": "silver / money"}, {"th": "ทอง", "rd": "thɔɔng", "en": "gold"}, {"th": "ใบ", "rd": "bai", "en": "classifier (bags/hats)"}, {"th": "วง", "rd": "wong", "en": "classifier (rings)"}, {"th": "เรือน", "rd": "rʉan", "en": "classifier (clocks)"}, {"th": "อัน", "rd": "an", "en": "classifier (small items)"}, {"th": "ราคา", "rd": "raa-khaa", "en": "price"}, {"th": "โปรแกรม", "rd": "bproo-grɛɛm", "en": "program"}, {"th": "ปี", "rd": "bpii", "en": "year"}, {"th": "หยวน", "rd": "yuan", "en": "yuan"}, {"th": "เยน", "rd": "yen", "en": "yen"}, {"th": "นาที", "rd": "naa-thii", "en": "minute"}, {"th": "วัน", "rd": "wan", "en": "day"}, {"th": "เบา", "rd": "bao", "en": "light (weight)"}, {"th": "ผอม", "rd": "phɔ̆ɔm", "en": "thin / slim"}, {"th": "ยาว", "rd": "yaao", "en": "long"}, {"th": "เร็ว", "rd": "reo", "en": "fast"}, {"th": "ไกล", "rd": "glai", "en": "far"}, {"th": "แก่", "rd": "gɛ̀ɛ", "en": "old (aged)"}, {"th": "อ่อน", "rd": "ɔ̀ɔn", "en": "young / soft"}, {"th": "หล่อ", "rd": "lɔ̀ɔ", "en": "handsome"}, {"th": "นาน", "rd": "naan", "en": "long (time)"}, {"th": "เดือน", "rd": "dʉan", "en": "month / moon"}, {"th": "เพราะ", "rd": "phrɔ́", "en": "because"}, {"th": "แข็งแรง", "rd": "khɛ̆ng-rɛɛng", "en": "strong / healthy"}, {"th": "ความชอบ", "rd": "khwaam-chɔ̂ɔp", "en": "preference"}, {"th": "ตา", "rd": "dtaa", "en": "eye"}, {"th": "ยาย", "rd": "yaai", "en": "grandmother (maternal)"}, {"th": "ลุง", "rd": "lung", "en": "uncle (elder)"}, {"th": "อา", "rd": "aa", "en": "aunt/uncle (younger)"}, {"th": "น้องชาย", "rd": "nɔ́ɔng-chaai", "en": "younger brother"}, {"th": "ภรรยา", "rd": "phan-ra-yaa", "en": "wife (formal)"}, {"th": "เมีย", "rd": "mia", "en": "wife (casual)"}, {"th": "แฟน", "rd": "fɛɛn", "en": "partner / boyfriend"}, {"th": "เพื่อน", "rd": "phʉ̂an", "en": "friend"}, {"th": "เพิ่ม", "rd": "phə̂əm", "en": "to add / increase"}, {"th": "ดัง", "rd": "dang", "en": "loud / famous"}, {"th": "ดี", "rd": "dii", "en": "good"}, {"th": "ร้อน", "rd": "rɔ́ɔn", "en": "hot"}, {"th": "แย่", "rd": "yɛ̂ɛ", "en": "terrible"}, {"th": "น้อย", "rd": "nɔ́ɔi", "en": "few / little"}, {"th": "ซื้อ", "rd": "sʉ́ʉ", "en": "to buy"}, {"th": "ทำ", "rd": "tham", "en": "to do / make"}, {"th": "เตรียม", "rd": "dtriam", "en": "to prepare"}, {"th": "แบ่ง", "rd": "bɛ̀ng", "en": "to divide / share"}, {"th": "ทาน", "rd": "thaan", "en": "to eat (polite)"}, {"th": "อร่อย", "rd": "a-rɔ̀ɔi", "en": "delicious"}, {"th": "ครัวซองต์", "rd": "khrua-sɔɔng", "en": "croissant"}, {"th": "พาย", "rd": "phaai", "en": "pie"}, {"th": "แตงโม", "rd": "dtɛɛng-moo", "en": "watermelon"}, {"th": "มะนาว", "rd": "ma-naao", "en": "lime"}, {"th": "เครื่องดื่ม", "rd": "khrʉ̂ang-dʉ̀ʉm", "en": "drink"}, {"th": "กาแฟ", "rd": "gaa-fɛɛ", "en": "coffee"}, {"th": "ชา", "rd": "chaa", "en": "tea"}, {"th": "ช็อกโกแลต", "rd": "chɔ́k-goo-lɛ́ɛt", "en": "chocolate"}, {"th": "นม", "rd": "nom", "en": "milk"}, {"th": "นมวัว", "rd": "nom-wua", "en": "cow's milk"}, {"th": "ทนาย", "rd": "tha-naai", "en": "lawyer"}, {"th": "อาจารย์", "rd": "aa-jaan", "en": "teacher / professor"}, {"th": "ครู", "rd": "khruu", "en": "teacher (school)"}, {"th": "สบาย ๆ", "rd": "sa-baai-sa-baai", "en": "easygoing"}, {"th": "จริงใจ", "rd": "jing-jai", "en": "sincere"}, {"th": "ใจดี", "rd": "jai-dii", "en": "kind"}, {"th": "ใจเย็น", "rd": "jai-yen", "en": "calm"}, {"th": "ใจร้อน", "rd": "jai-rɔ́ɔn", "en": "hot-tempered"}, {"th": "ใจแคบ", "rd": "jai-khɛ̂ɛp", "en": "narrow-minded"}, {"th": "เขย", "rd": "khə̆əi", "en": "male in-law"}, {"th": "น้องเขย", "rd": "nɔ́ɔng-khə̆əi", "en": "younger sister's husband"}, {"th": "แต่งงาน", "rd": "dtɛ̀ng-ngaan", "en": "to marry"}, {"th": "เรียนต่อ", "rd": "rian-dtɔ̀ɔ", "en": "to continue studies"}, {"th": "ระวัง", "rd": "ra-wang", "en": "to be careful"}, {"th": "ห้องนอน", "rd": "hɔ̂ɔng-nɔɔn", "en": "bedroom"}, {"th": "ห้องครัว", "rd": "hɔ̂ɔng-khrua", "en": "kitchen"}, {"th": "ระเบียง", "rd": "ra-biang", "en": "balcony"}, {"th": "ประตู", "rd": "bpra-dtuu", "en": "door"}, {"th": "บันได", "rd": "ban-dai", "en": "stairs"}, {"th": "โซฟา", "rd": "soo-faa", "en": "sofa"}, {"th": "แอร์", "rd": "ɛɛ", "en": "air conditioner"}, {"th": "ดารา", "rd": "daa-raa", "en": "celebrity"}, {"th": "ตัวละคร", "rd": "dtua-la-khɔɔn", "en": "character (in a story)"}, {"th": "อารมณ์", "rd": "aa-rom", "en": "emotion / mood"}, {"th": "อารมณ์ดี", "rd": "aa-rom-dii", "en": "in a good mood"}, {"th": "สบายใจ", "rd": "sa-baai-jai", "en": "to feel at ease"}, {"th": "ดีใจ", "rd": "dii-jai", "en": "glad"}, {"th": "อาย", "rd": "aai", "en": "shy / embarrassed"}, {"th": "งง", "rd": "ngong", "en": "confused"}, {"th": "รำคาญ", "rd": "ram-khaan", "en": "annoyed"}, {"th": "ออนแอร์", "rd": "ɔɔn-ɛɛ", "en": "to be on air"}, {"th": "เรื่อง", "rd": "rʉ̂ʉang", "en": "story / classifier"}, {"th": "หมอ", "rd": "mɔ̆ɔ", "en": "doctor"}, {"th": "พยาบาล", "rd": "pha-yaa-baan", "en": "nurse"}, {"th": "คอ", "rd": "khɔɔ", "en": "neck / throat"}, {"th": "ตัว", "rd": "dtua", "en": "body / classifier"}, {"th": "แขน", "rd": "khɛ̆ɛn", "en": "arm"}, {"th": "มือ", "rd": "mʉʉ", "en": "hand"}, {"th": "ศอก", "rd": "sɔ̀ɔk", "en": "elbow"}, {"th": "บอกอาการ", "rd": "bɔ̀ɔk-aa-gaan", "en": "to describe symptoms"}, {"th": "เป็นลม", "rd": "bpen-lom", "en": "to faint"}, {"th": "เป็นภูมิแพ้", "rd": "bpen-phuum-phɛ́ɛ", "en": "to have an allergy"}, {"th": "จาม", "rd": "jaam", "en": "to sneeze"}, {"th": "ไอ", "rd": "ai", "en": "to cough"}, {"th": "ตัวร้อน", "rd": "dtua-rɔ́ɔn", "en": "to have a fever"}, {"th": "อาเจียน", "rd": "aa-jian", "en": "to vomit"}, {"th": "เมา", "rd": "mao", "en": "to be drunk"}, {"th": "คัน", "rd": "khan", "en": "itchy"}, {"th": "เกา", "rd": "gao", "en": "to scratch"}, {"th": "เมื่อย", "rd": "mʉ̂ai", "en": "sore / stiff"}, {"th": "หอม", "rd": "hɔ̆ɔm", "en": "to smell good"}, {"th": "แปลก", "rd": "bplɛ̀ɛk", "en": "strange"}, {"th": "เดิม", "rd": "dəəm", "en": "original / same"}, {"th": "อีเมล", "rd": "ii-meeo", "en": "email"}, {"th": "ไลน์", "rd": "lai", "en": "LINE (app)"}, {"th": "กะเพรา", "rd": "ga-phrao", "en": "holy basil"}, {"th": "กระเทียม", "rd": "gra-thiam", "en": "garlic"}, {"th": "เบียร์", "rd": "bia", "en": "beer"}, {"th": "จาน", "rd": "jaan", "en": "plate"}, {"th": "กระป๋อง", "rd": "gra-bpɔ̆ɔng", "en": "can"}, {"th": "ขึ้น", "rd": "khʉ̂n", "en": "to go up"}, {"th": "ลง", "rd": "long", "en": "to go down"}, {"th": "ออก", "rd": "ɔ̀ɔk", "en": "to exit"}, {"th": "กล่อง", "rd": "glɔ̀ng", "en": "box"}, {"th": "โจร", "rd": "joon", "en": "robber"}, {"th": "ขโมย", "rd": "kha-mooi", "en": "thief"}, {"th": "ขอทาน", "rd": "khɔ̆ɔ-thaan", "en": "beggar"}, {"th": "เถอะ", "rd": "thə̀", "en": "let's / do (suggestion)"}, {"th": "ชน", "rd": "chon", "en": "to collide"}, {"th": "ต่อย", "rd": "dtɔ̀ɔi", "en": "to punch / sting"}, {"th": "ตี", "rd": "dtii", "en": "to hit"}, {"th": "โกง", "rd": "goong", "en": "to cheat"}, {"th": "หลอก", "rd": "lɔ̀ɔk", "en": "to deceive"}, {"th": "แกล้ง", "rd": "glɛ̂ng", "en": "to tease / bully"}, {"th": "แตก", "rd": "dtɛ̀ɛk", "en": "to break / shatter"}, {"th": "ดูแล", "rd": "duu-lɛɛ", "en": "to take care of"}, {"th": "ทำแผล", "rd": "tham-phlɛ̆ɛ", "en": "to dress a wound"}, {"th": "ยา", "rd": "yaa", "en": "medicine"}, {"th": "ยากิน", "rd": "yaa-gin", "en": "oral medicine"}, {"th": "ยาทา", "rd": "yaa-thaa", "en": "topical cream"}, {"th": "เลือด", "rd": "lʉ̂ʉat", "en": "blood"}, {"th": "แผล", "rd": "phlɛ̆ɛ", "en": "wound"}, {"th": "กล่องพยาบาล", "rd": "glɔ̀ng-pha-yaa-baan", "en": "first-aid kit"}, {"th": "แมลง", "rd": "ma-lɛɛng", "en": "insect"}, {"th": "แมง", "rd": "mɛɛng", "en": "bug / arachnid"}, {"th": "ยุง", "rd": "yung", "en": "mosquito"}, {"th": "ผึ้ง", "rd": "phʉ̂ng", "en": "bee"}, {"th": "ต่อ", "rd": "dtɔ̀ɔ", "en": "wasp / to extend"}, {"th": "แมงมุม", "rd": "mɛɛng-mum", "en": "spider"}, {"th": "แมงป่อง", "rd": "mɛɛng-bpɔ̀ɔng", "en": "scorpion"}, {"th": "แมงกะพรุน", "rd": "mɛɛng-ga-phrun", "en": "jellyfish"}, {"th": "อันตราย", "rd": "an-dta-raai", "en": "dangerous"}, {"th": "ปลอดภัย", "rd": "bplɔ̀ɔt-phai", "en": "safe"}, {"th": "อำเภอ", "rd": "am-phəə", "en": "district"}, {"th": "แขวง", "rd": "khwɛ̆ɛng", "en": "sub-district (Bangkok)"}, {"th": "ตำบล", "rd": "dtam-bon", "en": "sub-district (rural)"}, {"th": "ชุมชน", "rd": "chum-chon", "en": "community"}, {"th": "ทาง", "rd": "thaang", "en": "way / direction"}, {"th": "เหนือ", "rd": "nʉ̆ʉa", "en": "north"}, {"th": "ตะวันออก", "rd": "dta-wan-ɔ̀ɔk", "en": "east"}, {"th": "เจดีย์", "rd": "jee-dii", "en": "pagoda"}, {"th": "วัง", "rd": "wang", "en": "palace"}, {"th": "ดอย", "rd": "dɔɔi", "en": "mountain (northern)"}, {"th": "เขื่อน", "rd": "khʉ̀ʉan", "en": "dam"}, {"th": "คลอง", "rd": "khlɔɔng", "en": "canal"}, {"th": "ทะเล", "rd": "tha-lee", "en": "sea"}, {"th": "เกาะ", "rd": "gɔ̀", "en": "island"}, {"th": "ฤดู", "rd": "rʉ́-duu", "en": "season"}, {"th": "ดูดาว", "rd": "duu-daao", "en": "to stargaze"}, {"th": "ล่องแพ", "rd": "lɔ̂ng-phɛɛ", "en": "to go rafting"}, {"th": "พายเรือ", "rd": "phaai-rʉa", "en": "to row a boat"}, {"th": "จะ", "rd": "jà", "en": "will (future)"}, {"th": "นะ", "rd": "ná", "en": "particle (softener)"}, {"th": "และ", "rd": "lɛ́", "en": "and"}, {"th": "กับ", "rd": "gàp", "en": "with"}, {"th": "รัก", "rd": "rák", "en": "to love"}, {"th": "จับ", "rd": "jàp", "en": "to grab"}, {"th": "ทัน", "rd": "than", "en": "in time"}, {"th": "ขับ", "rd": "khàp", "en": "to drive"}, {"th": "ผิด", "rd": "phìt", "en": "wrong"}, {"th": "คิด", "rd": "khít", "en": "to think"}, {"th": "ติด", "rd": "dtìt", "en": "stuck / attached"}, {"th": "ริม", "rd": "rim", "en": "edge"}, {"th": "ชิด", "rd": "chít", "en": "close to"}, {"th": "ลิง", "rd": "ling", "en": "monkey"}, {"th": "ถุง", "rd": "thŭng", "en": "bag"}, {"th": "ลุก", "rd": "lúk", "en": "to get up"}, {"th": "ทุก", "rd": "thúk", "en": "every"}, {"th": "บุญ", "rd": "bun", "en": "merit"}, {"th": "คุณ", "rd": "khun", "en": "you (polite)"}, {"th": "สุข", "rd": "sùk", "en": "happiness"}, {"th": "เด็ก", "rd": "dèk", "en": "child"}, {"th": "เผ็ด", "rd": "phèt", "en": "spicy"}, {"th": "เย็น", "rd": "yen", "en": "cool / evening"}, {"th": "เซ็น", "rd": "sen", "en": "to sign"}, {"th": "เป็น", "rd": "bpen", "en": "to be"}, {"th": "เล่น", "rd": "lên", "en": "to play"}, {"th": "คน", "rd": "khon", "en": "person"}, {"th": "ฝน", "rd": "fŏn", "en": "rain"}, {"th": "จน", "rd": "jon", "en": "poor / until"}, {"th": "ลม", "rd": "lom", "en": "wind"}, {"th": "ผม", "rd": "phŏm", "en": "I (male) / hair"}, {"th": "ต้น", "rd": "dtôn", "en": "tree / beginning"}, {"th": "แกะ", "rd": "gɛ̀", "en": "sheep"}, {"th": "แคะ", "rd": "khɛ́", "en": "to pick out"}, {"th": "เลอะ", "rd": "lə́", "en": "messy"}, {"th": "มา", "rd": "maa", "en": "to come"}, {"th": "ปลา", "rd": "bplaa", "en": "fish"}, {"th": "ขา", "rd": "khăa", "en": "leg"}, {"th": "หมา", "rd": "măa", "en": "dog"}, {"th": "บ้าน", "rd": "bâan", "en": "house"}, {"th": "มี", "rd": "mii", "en": "to have"}, {"th": "สี", "rd": "sĭi", "en": "color"}, {"th": "หนี", "rd": "nĭi", "en": "to flee"}, {"th": "หมู", "rd": "mŭu", "en": "pig"}, {"th": "ดู", "rd": "duu", "en": "to look"}, {"th": "รู้", "rd": "rúu", "en": "to know"}, {"th": "ปู", "rd": "bpuu", "en": "crab"}, {"th": "งู", "rd": "nguu", "en": "snake"}, {"th": "เท", "rd": "thee", "en": "to pour"}, {"th": "เก", "rd": "gee", "en": "to dodge"}, {"th": "เซ", "rd": "see", "en": "to stagger"}, {"th": "เมล์", "rd": "mee", "en": "mail / bus"}, {"th": "โต", "rd": "dtoo", "en": "big / to grow"}, {"th": "โชค", "rd": "chôok", "en": "luck"}, {"th": "โมง", "rd": "moong", "en": "o'clock"}, {"th": "โง่", "rd": "ngôo", "en": "foolish"}, {"th": "พอ", "rd": "phɔɔ", "en": "enough"}, {"th": "รอ", "rd": "rɔɔ", "en": "to wait"}, {"th": "ขอ", "rd": "khɔ̆ɔ", "en": "to ask for"}, {"th": "สอน", "rd": "sɔ̆ɔn", "en": "to teach"}, {"th": "แม่", "rd": "mɛ̂ɛ", "en": "mother"}, {"th": "แดง", "rd": "dɛɛng", "en": "red"}, {"th": "เธอ", "rd": "thəə", "en": "you / she"}, {"th": "เจอ", "rd": "jəə", "en": "to meet"}, {"th": "เดิน", "rd": "dəən", "en": "to walk"}, {"th": "เกิด", "rd": "gə̀ət", "en": "to be born"}, {"th": "คือ", "rd": "khʉʉ", "en": "to be / namely"}, {"th": "ลือ", "rd": "lʉʉ", "en": "to spread (rumor)"}, {"th": "ถือ", "rd": "thʉ̆ʉ", "en": "to hold"}, {"th": "เสีย", "rd": "sĭa", "en": "to be spoiled"}, {"th": "เรียน", "rd": "rian", "en": "to study"}, {"th": "เขียน", "rd": "khĭan", "en": "to write"}, {"th": "เปลี่ยน", "rd": "bplìan", "en": "to change"}, {"th": "เรือ", "rd": "rʉa", "en": "boat"}, {"th": "เสือ", "rd": "sʉ̆ʉa", "en": "tiger"}, {"th": "เมือง", "rd": "mʉang", "en": "city"}, {"th": "เกลือ", "rd": "glʉa", "en": "salt"}, {"th": "วัว", "rd": "wua", "en": "cow"}, {"th": "รวย", "rd": "ruai", "en": "rich"}, {"th": "ดาว", "rd": "daao", "en": "star"}, {"th": "สวย", "rd": "sŭai", "en": "beautiful"}, {"th": "ไป", "rd": "bpai", "en": "to go"}, {"th": "ใจ", "rd": "jai", "en": "heart"}, {"th": "ใหม่", "rd": "mài", "en": "new"}, {"th": "ไหน", "rd": "năi", "en": "where"}, {"th": "ใคร", "rd": "khrai", "en": "who"}, {"th": "เรา", "rd": "rao", "en": "we"}, {"th": "เขา", "rd": "khăo", "en": "he / she / mountain"}, {"th": "เก้า", "rd": "gâo", "en": "nine"}, {"th": "เอา", "rd": "ao", "en": "to take / want"}, {"th": "สาว", "rd": "săao", "en": "young woman"}, {"th": "น้ำ", "rd": "náam", "en": "water"}, {"th": "คำ", "rd": "kham", "en": "word"}, {"th": "ดำ", "rd": "dam", "en": "black"}, {"th": "จำ", "rd": "jam", "en": "to remember"}, {"th": "นำ", "rd": "nam", "en": "to lead"}, {"th": "หิว", "rd": "hĭu", "en": "hungry"}, {"th": "นิ้ว", "rd": "níu", "en": "finger"}, {"th": "เคี้ยว", "rd": "khíao", "en": "to chew"}, {"th": "เลว", "rd": "leeo", "en": "bad / evil"}, {"th": "เดี๋ยว", "rd": "dĭao", "en": "in a moment"}, {"th": "แมว", "rd": "mɛɛo", "en": "cat"}, {"th": "แล้ว", "rd": "lɛ́ɛo", "en": "already"}, {"th": "แห้ว", "rd": "hɛ̂ɛo", "en": "water chestnut"}, {"th": "โดย", "rd": "dooi", "en": "by"}, {"th": "โรย", "rd": "rooi", "en": "to sprinkle"}, {"th": "ห้อย", "rd": "hɔ̂ɔi", "en": "to hang"}, {"th": "ช่วย", "rd": "chûai", "en": "to help"}, {"th": "ด้วย", "rd": "dûai", "en": "also / with"}, {"th": "ป่วย", "rd": "bpùai", "en": "sick"}, {"th": "เหนื่อย", "rd": "nʉ̀ai", "en": "tired"}, {"th": "สาย", "rd": "săai", "en": "late / line"}, {"th": "ขาย", "rd": "khăai", "en": "to sell"}, {"th": "หาย", "rd": "hăai", "en": "to disappear"}, {"th": "ง่าย", "rd": "ngâai", "en": "easy"}, {"th": "คอย", "rd": "khɔɔi", "en": "to wait for"}, {"th": "ร้อย", "rd": "rɔ́ɔi", "en": "hundred"}, {"th": "ปล่อย", "rd": "bplɔ̀i", "en": "to release"}];
+
+/* reading -> looped Thai spelling (for the "with-head" comparison after answering) */
+const RD2TH = {};
+for(const w of VOCAB){ if(!(w.rd in RD2TH)) RD2TH[w.rd]=w.th; }
+
+/* ====== Config ====== */
+const N_Q = 10;
+const N_CHOICES = 4;
+
+/* ====== Loopless-font confusable distractors ======
+   Goal: train reading the LOOPLESS Thai script, not spot-the-diff on the
+   romanization. So every choice is a DIFFERENT real word whose Thai spelling
+   looks easy to confuse with the target when the head-loops are gone.        */
+
+// Consonant / vowel groups that become hard to tell apart in a LOOPLESS
+// (ไม่มีหัว) display font. Derived directly from the TH3 loopless reference
+// sheet — each red-circled group is kept together, plus the look-alike pairs
+// read off the loopless column.
+const CONFUSE_MAP = {
+  "บ":["น", "ป", "ผ", "ฝ", "พ", "ฟ"],
+  "ป":["น", "บ", "ผ", "ฝ", "พ", "ฟ"],
+  "ค":["ศ"],
+  "ศ":["ค", "ร", "ล", "ว", "ษ", "ส"],
+  "ง":["จ", "ฉ"],
+  "จ":["ง", "ฉ"],
+  "ฉ":["ง", "จ"],
+  "ช":["ซ"],
+  "ซ":["ช"],
+  "ณ":["ญ"],
+  "ญ":["ณ"],
+  "ฎ":["ฏ", "ฐ"],
+  "ฏ":["ฎ", "ฐ"],
+  "ฐ":["ฎ", "ฏ"],
+  "ด":["ต", "ถ"],
+  "ต":["ด", "ถ"],
+  "ถ":["ด", "ต"],
+  "น":["บ", "ป", "ผ", "ฝ", "พ", "ฟ"],
+  "ผ":["น", "บ", "ป", "ฝ", "พ", "ฟ"],
+  "ฝ":["น", "บ", "ป", "ผ", "พ", "ฟ"],
+  "พ":["น", "บ", "ป", "ผ", "ฝ", "ฟ"],
+  "ฟ":["น", "บ", "ป", "ผ", "ฝ", "พ"],
+  "ภ":["ม"],
+  "ม":["ภ"],
+  "ร":["ล", "ว", "ศ", "ษ", "ส"],
+  "ล":["ร", "ว", "ศ", "ษ", "ส"],
+  "ว":["ร", "ล", "ศ", "ษ", "ส"],
+  "ษ":["ร", "ล", "ว", "ศ", "ส"],
+  "ส":["ร", "ล", "ว", "ศ", "ษ"],
+  "อ":["ฮ"],
+  "ฮ":["อ"],
+  "ิ":["ี", "ึ", "ื"],
+  "ี":["ิ", "ึ", "ื"],
+  "ึ":["ิ", "ี", "ื"],
+  "ื":["ิ", "ี", "ึ"],
+  "ุ":["ู"],
+  "ู":["ุ"],
+  "เ":["แ", "โ"],
+  "แ":["เ"],
+  "โ":["เ"]
+};
+const CONFUSE = {};
+for(const k in CONFUSE_MAP){ CONFUSE[k] = new Set(CONFUSE_MAP[k]); }
+
+// How visually confusable is `cand`'s spelling against `target` in loopless type?
+function confuseScore(target, cand){
+  if(cand.th===target.th) return -1;
+  const ta=[...target.th], ca=[...cand.th];
+  let s=0;
+  s -= Math.abs(ta.length-ca.length)*2;          // similar length = more confusing
+  const setA=new Set(ta), setC=new Set(ca);
+  for(const c of setA) if(setC.has(c)) s+=2;      // shared exact letters
+  for(const c of setA){                            // confusable-pair overlap
+    const twins=CONFUSE[c];
+    if(twins){ for(const t of twins) if(setC.has(t)){ s+=3; break; } }
+  }
+  if(ta[0]===ca[0]) s+=4;                          // same first letter = deceptive
+  else if(CONFUSE[ta[0]]&&CONFUSE[ta[0]].has(ca[0])) s+=5; // confusable onset = very deceptive
+  return s;
+}
+
+/* ====== Build one question ====== */
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function makeDistractors(correct, pool){
+  // rank all other real words by loopless-confusability, take a top slice,
+  // then pick from it with a little randomness so quizzes vary.
+  const scored = pool
+    .filter(w=>w.th!==correct.th && w.rd!==correct.rd)
+    .map(w=>({w, s:confuseScore(correct,w)}))
+    .sort((a,b)=>b.s-a.s);
+  const topPool = shuffle(scored.slice(0, 12)).map(x=>x.w); // best 12, shuffled
+  const out=[]; const seen=new Set([correct.rd]);
+  for(const w of topPool){
+    if(out.length>=N_CHOICES-1) break;
+    if(!seen.has(w.rd)){ seen.add(w.rd); out.push(w.rd); }
+  }
+  // safety fill (rarely needed) with any remaining real words
+  if(out.length<N_CHOICES-1){
+    for(const x of shuffle(scored).map(s=>s.w)){
+      if(out.length>=N_CHOICES-1) break;
+      if(!seen.has(x.rd)){ seen.add(x.rd); out.push(x.rd); }
+    }
+  }
+  return out.slice(0,N_CHOICES-1);
+}
+
+/* ====== Quiz state ====== */
+let questions=[], qi=0, score=0, streak=0, bestStreak=0, locked=false, misses=[];
+
+function buildQuiz(){
+  const picks = shuffle(VOCAB).slice(0, N_Q);
+  questions = picks.map(w=>{
+    const distractors = makeDistractors(w, VOCAB);
+    const choices = shuffle([w.rd, ...distractors]);
+    return {w, choices, answer:w.rd};
+  });
+  qi=0; score=0; streak=0; bestStreak=0; misses=[];
+}
+
+/* ====== Render ====== */
+const $=id=>document.getElementById(id);
+const LETTERS=['A','B','C','D'];
+
+function renderQ(){
+  locked=false;
+  const q=questions[qi];
+  $('qnum').textContent=qi+1;
+  $('score').textContent=score;
+  $('streak').textContent=streak;
+  $('bar').style.width=((qi)/N_Q*100)+'%';
+  $('thai').textContent=q.w.th;
+  const jp=$('jp'); jp.textContent=q.w.en; jp.classList.remove('show');
+  const fb=$('feedback'); fb.className='feedback'; fb.textContent='';
+  $('next').disabled=true;
+  $('next').textContent = (qi===N_Q-1)?'See results →':'Next →';
+
+  const box=$('choices'); box.innerHTML='';
+  q.choices.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    const looped = RD2TH[c] || '';
+    b.innerHTML=`<span class="dot">${LETTERS[i]}</span>`
+      +`<span class="ctxt">${c}</span>`
+      +`<span class="looped" aria-hidden="true">${looped}</span>`;
+    b.onclick=()=>pick(b,c,q);
+    box.appendChild(b);
+  });
+}
+
+function pick(btn, choice, q){
+  if(locked) return;
+  locked=true;
+  const correct = choice===q.answer;
+  const fb=$('feedback');
+  $('jp').classList.add('show'); // reveal meaning as part of explanation
+
+  document.querySelectorAll('.choice').forEach(el=>{
+    el.classList.add('locked');
+    const txt=el.querySelector('.ctxt').textContent;
+    if(txt===q.answer){
+      el.classList.add('correct');
+      el.querySelector('.looped').classList.add('show'); // reveal looped form on the answer
+    } else if(el===btn){
+      el.classList.add('wrong');
+      el.querySelector('.looped').classList.add('show'); // and on the wrong pick
+    } else {
+      el.classList.add('dim');
+    }
+  });
+
+  if(correct){
+    score++; streak++;
+    if(streak>bestStreak) bestStreak=streak;
+    fb.className='feedback show ok';
+    fb.innerHTML=`✓ Correct — <span class="ans">${q.answer}</span> <span class="fb-th">${RD2TH[q.answer]||''}</span>`;
+  }else{
+    streak=0;
+    fb.className='feedback show no';
+    fb.innerHTML=`✗ Answer: <span class="ans">${q.answer}</span> <span class="fb-th">${RD2TH[q.answer]||''}</span>`;
+    misses.push({th:q.w.th, you:choice, youTh:RD2TH[choice]||'', cor:q.answer, corTh:RD2TH[q.answer]||'', en:q.w.en});
+  }
+  $('score').textContent=score;
+  $('streak').textContent=streak;
+  $('next').disabled=false;
+}
+
+$('next').onclick=()=>{
+  if(qi<N_Q-1){ qi++; renderQ(); }
+  else showResult();
+};
+
+function showResult(){
+  $('quiz').style.display='none';
+  $('resultScreen').style.display='block';
+  $('bar').style.width='100%';
+  const pct=Math.round(score/N_Q*100);
+  $('finalScore').textContent=score;
+  $('finalPct').textContent=`${score} / ${N_Q} · ${pct}%`;
+  let v;
+  if(pct===100) v='Flawless — you read every loopless letter right.';
+  else if(pct>=80) v='Strong run — the loopless shapes are clicking.';
+  else if(pct>=50) v='Good progress — keep telling the lookalike letters apart.';
+  else v='Keep drilling — focus on the confusable letter shapes.';
+  $('verdict').textContent=v;
+
+  /* ---- Achievement based on BEST STREAK as a share of total questions ----
+     ≤40% → yuzu · >40% and <90% → sakura · ≥90% → fireworks                */
+  const streakPct = bestStreak / N_Q;   // 0..1, works for any quiz length
+  let icon, msg, sub;
+  if(streakPct <= 0.40){
+    icon='🍋';
+    msg='Fresh start, like a yuzu';
+    sub=`Your best run was ${bestStreak} in a row. Every master starts here — line up two, then three. Come back and grow that streak!`;
+  } else if(streakPct < 0.90){
+    icon='🌸';
+    msg='In full bloom, like sakura';
+    sub=`A best streak of ${bestStreak} straight — your eye for the loopless shapes is blossoming. One more round and the petals turn to fireworks. 🌸`;
+  } else {
+    icon='🎆';
+    msg='Fireworks! A true Loopless Font Master';
+    sub=`${bestStreak} correct in a row — dazzling. The loopless letters hold no secrets from you now. Can you do it again? 🎆`;
+  }
+  $('achieveIcon').textContent=icon;
+  $('achieveMsg').textContent=msg;
+  $('achieveSub').textContent=sub;
+  // restart the pop animation each time
+  const ai=$('achieveIcon'); ai.style.animation='none'; void ai.offsetWidth; ai.style.animation='';
+
+  const rev=$('review');
+  if(misses.length===0){
+    rev.innerHTML='<div class="perfect">No mistakes — nothing to review. 🎉</div>';
+  }else{
+    let h='<h3>Review · '+misses.length+' missed</h3>';
+    misses.forEach(m=>{
+      h+=`<div class="miss">
+        <div class="mth">${m.th}</div>
+        <div class="mbody">
+          <div>You: <span class="you">${m.you}</span> <span class="rv-th you-th">${m.youTh||''}</span></div>
+          <div>Correct: <span class="cor">${m.cor}</span> <span class="rv-th cor-th">${m.corTh||''}</span></div>
+          <div class="jp">${m.en}</div>
+        </div>
+      </div>`;
+    });
+    rev.innerHTML=h;
+  }
+}
+
+$('again').onclick=()=>{
+  $('resultScreen').style.display='none';
+  $('quiz').style.display='block';
+  buildQuiz(); renderQ();
+};
+
+/* init */
+buildQuiz(); renderQ();
+</script>
+</body>
+</html>
