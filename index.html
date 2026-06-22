@@ -4,288 +4,504 @@
 <meta charset="UTF-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Loopless Font Master — Thai Reading Quiz</title>
+<title>LOOPLESS FONT MASTER — Moonoi Monsoon</title>
+<meta name="description" content="Train your eye to read loopless (ไม่มีหัว) Thai script. By Moonoi Monsoon.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1b2433;
-    --paper:#f5f1e8;
-    --card:#ffffff;
-    --line:#e3ddcd;
-    --teal:#0f8a7d;
-    --teal-dk:#0a6359;
-    --coral:#e7543f;
-    --gold:#e0a92e;
-    --muted:#7d8597;
-    --good:#0f8a7d;
-    --good-bg:#e3f4f0;
-    --bad:#e7543f;
-    --bad-bg:#fce8e4;
-    --shadow:0 10px 30px rgba(27,36,51,.10);
+    --lime:#9FD92A;
+    --lime-hi:#cdeb5f;
+    --lime-lo:#7cb518;
+    --olive:#17220a;
+    --olive-2:#1c2908;
+    --olive-card:#162005;
+    --cream:#eef6d4;
+    --cream-dim:#b9c98e;
+    --ring:rgba(159,217,42,.5);
+    --good:#9FD92A;
+    --good-hi:#cdeb5f;
+    --bad:#e0533a;
+    --bad-hi:#ff6a4d;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%}
+  html{scroll-behavior:smooth;background:#0a0f04}
   body{
-    font-family:'Sarabun',system-ui,sans-serif;
+    font-family:'Prompt',system-ui,sans-serif;
     background:
-      radial-gradient(1200px 600px at 80% -10%, #fbf7ee 0%, transparent 60%),
-      var(--paper);
-    color:var(--ink);
+      radial-gradient(120% 80% at 50% -10%, rgba(170,210,80,.07) 0%, transparent 42%),
+      radial-gradient(70% 50% at 22% 8%, rgba(159,217,42,.05) 0%, transparent 55%),
+      radial-gradient(60% 45% at 82% 4%, rgba(159,217,42,.035) 0%, transparent 55%),
+      linear-gradient(180deg, #17220a 0%, #131c08 38%, #0d1406 78%, #0a0f04 100%);
+    background-color:#0a0f04;
+    color:var(--cream);
     min-height:100dvh;
-    display:flex;align-items:flex-start;justify-content:center;
-    padding:18px 16px 40px;
+    overflow-x:hidden;
   }
-  .wrap{width:100%;max-width:480px}
+  body::after{
+    content:"";position:fixed;left:50%;bottom:-8%;transform:translateX(-50%);
+    width:120%;height:42%;pointer-events:none;z-index:0;
+    background:radial-gradient(60% 100% at 50% 100%, rgba(255,138,38,.10) 0%, rgba(255,96,30,.05) 40%, transparent 72%);
+    mix-blend-mode:screen;
+    animation:forgeBreathe 7s ease-in-out infinite;
+  }
+  @keyframes forgeBreathe{0%,100%{opacity:.55}50%{opacity:.9}}
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:repeating-linear-gradient(0deg,rgba(159,217,42,.022) 0 2px,transparent 2px 4px);
+    mix-blend-mode:screen;opacity:.5;
+  }
+  .embers{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .ember{
+    position:absolute;bottom:-12px;width:3px;height:3px;border-radius:50%;
+    background:#ffb347;box-shadow:0 0 6px 1px rgba(255,150,50,.7);
+    opacity:0;animation:rise linear infinite;
+  }
+  .ember.spark{width:2px;height:2px;background:#ffe08a;box-shadow:0 0 7px 2px rgba(255,210,120,.8);}
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0) scale(1);opacity:0}
+    8%{opacity:.9}70%{opacity:.7}
+    100%{transform:translateY(-104vh) translateX(var(--drift,14px)) scale(.5);opacity:0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    body::after{animation:none;opacity:.6}
+    .embers{display:none}
+  }
+  .wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:28px 18px 56px}
 
-  /* Header */
-  header{
-    display:flex;align-items:center;justify-content:space-between;
-    margin-bottom:18px;
+  .px{font-family:'Silkscreen',monospace}
+  .hidden{display:none!important}
+
+  /* ===== Hero / brand ===== */
+  .brand{text-align:center;margin-bottom:8px}
+  .brand .mark{
+    width:72px;height:72px;margin:0 auto 14px;border-radius:20px;
+    background:var(--olive-2);display:grid;place-items:center;
+    box-shadow:0 0 0 1px rgba(159,217,42,.18), 0 12px 30px rgba(0,0,0,.45);
   }
-  .brand{display:flex;flex-direction:column;line-height:1}
-  .brand .eyebrow{
-    font-family:'Prompt',sans-serif;font-weight:600;font-size:11px;
-    letter-spacing:.22em;text-transform:uppercase;color:var(--teal-dk);
+  .brand .mark svg{width:44px;height:44px}
+  .brand-name{
+    font-family:'Silkscreen',monospace;font-weight:700;
+    font-size:13px;letter-spacing:.14em;color:var(--lime);opacity:.85;
+    text-transform:uppercase;
   }
-  .brand .ttl{
-    font-family:'Prompt',sans-serif;font-weight:600;font-size:17px;
-    margin-top:5px;color:var(--ink);
+  .title{
+    font-family:'Silkscreen',monospace;font-weight:700;
+    font-size:clamp(20px,5.6vw,28px);line-height:1.12;color:var(--lime-hi);
+    text-shadow:0 0 18px rgba(159,217,42,.35);
+    text-align:center;margin:14px 0 4px;
   }
-  .badge{
-    font-family:'Prompt',sans-serif;font-weight:600;font-size:10px;
-    letter-spacing:.03em;
-    color:var(--teal-dk);background:#fff;border:1px solid var(--line);
-    padding:7px 11px;border-radius:999px;white-space:nowrap;
+  .subtitle{
+    text-align:center;color:var(--cream-dim);font-weight:300;font-size:14px;
+    line-height:1.55;max-width:34ch;margin:6px auto 0;
+  }
+  .px-rule{display:flex;gap:5px;justify-content:center;margin:24px 0}
+  .px-rule i{width:7px;height:7px;background:var(--lime);opacity:.85;border-radius:1px}
+  .px-rule i:nth-child(even){background:var(--lime-lo);opacity:.6}
+
+  /* ===== Start screen explainer ===== */
+  .explain{
+    background:linear-gradient(180deg,var(--olive-2),var(--olive-card));
+    border:1px solid rgba(159,217,42,.18);
+    border-radius:18px;padding:20px 20px 22px;margin-bottom:18px;
+  }
+  .explain-label{
+    font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--lime);opacity:.9;
+    text-align:center;margin-bottom:16px;
+  }
+  .demo{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:14px}
+  .demo-col{text-align:center}
+  .demo-glyph{
+    font-family:'Sarabun',sans-serif;font-weight:600;
+    font-size:46px;line-height:1;color:var(--cream);
+  }
+  .demo-glyph.loopless{color:var(--lime-hi)}
+  .demo-cap{
+    font-family:'Silkscreen',monospace;font-size:7px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--cream-dim);margin-top:8px;opacity:.8;
+  }
+  .demo-arrow{font-size:20px;color:var(--lime);opacity:.7}
+  .explain-text{
+    font-family:'Prompt',sans-serif;font-weight:300;font-size:13px;
+    color:var(--cream-dim);line-height:1.6;text-align:center;max-width:32ch;margin:0 auto;
   }
 
-  /* Stats bar */
-  .stats{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;
+  /* start button */
+  .start-btn{
+    display:block;width:100%;
+    font-family:'Silkscreen',monospace;font-size:15px;letter-spacing:.08em;
+    color:var(--olive);background:var(--lime);border:none;border-radius:14px;
+    padding:18px;cursor:pointer;margin-top:4px;
+    box-shadow:0 6px 20px rgba(159,217,42,.3);
+    transition:background .14s,transform .1s,box-shadow .14s;
   }
+  .start-btn:hover{background:var(--lime-hi);transform:translateY(-2px);box-shadow:0 10px 26px rgba(159,217,42,.38)}
+  .start-btn:active{transform:translateY(0)}
+  .start-btn:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+
+  /* ===== coffee button (shared) ===== */
+  .coffee-divider{display:flex;align-items:center;gap:10px;margin:22px 0 0}
+  .coffee-divider i{flex:1;height:1px;background:rgba(159,217,42,.14);display:block}
+  .coffee-divider span{
+    font-family:'Silkscreen',monospace;font-size:8px;letter-spacing:.14em;
+    color:var(--cream-dim);opacity:.6;text-transform:uppercase;
+  }
+  .coffee-btn{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    width:100%;margin-top:14px;text-decoration:none;box-sizing:border-box;
+    font-family:'Prompt',sans-serif;font-weight:500;font-size:13px;
+    color:var(--lime-hi);background:rgba(159,217,42,.06);
+    border:1px solid rgba(159,217,42,.35);border-radius:14px;padding:14px;
+    transition:background .14s,transform .1s;
+  }
+  .coffee-btn .cup{font-size:17px;line-height:1}
+  .coffee-btn:active{transform:translateY(1px)}
+  .coffee-btn:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+  @media (hover:hover){
+    .coffee-btn:hover{background:rgba(159,217,42,.12);border-color:rgba(159,217,42,.5)}
+  }
+
+  /* ===== Game header ===== */
+  .game-header{
+    display:flex;align-items:center;gap:8px;margin-bottom:16px;
+    padding-bottom:12px;border-bottom:1px solid rgba(159,217,42,.12);
+  }
+  .hdr-mark{width:22px;height:22px;flex:0 0 auto}
+  .hdr-name{
+    font-family:'Silkscreen',monospace;font-size:11px;letter-spacing:.06em;
+    color:var(--lime);opacity:.9;
+  }
+  .hdr-tag{
+    margin-left:auto;font-family:'Silkscreen',monospace;font-size:9px;letter-spacing:.1em;
+    color:var(--olive);background:var(--lime);border-radius:6px;
+    padding:4px 9px;text-transform:uppercase;
+  }
+
+  /* ===== Stat bar ===== */
+  .statbar{display:flex;justify-content:space-between;gap:8px;margin-bottom:14px}
   .stat{
-    background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:11px 10px;text-align:center;
+    flex:1;text-align:center;background:rgba(0,0,0,.25);
+    border:1px solid rgba(159,217,42,.12);border-radius:11px;padding:9px 4px;
   }
-  .stat .k{
-    font-family:'Prompt',sans-serif;font-size:10px;font-weight:600;
-    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
-  }
-  .stat .v{
-    font-family:'Prompt',sans-serif;font-weight:700;font-size:22px;margin-top:3px;
-  }
-  .stat .v small{font-size:13px;color:var(--muted);font-weight:500}
-  #streakStat .v{color:var(--gold)}
-  #scoreStat .v{color:var(--teal)}
+  .stat .k{font-family:'Silkscreen',monospace;font-size:8px;letter-spacing:.1em;color:var(--cream-dim);text-transform:uppercase}
+  .stat .v{font-family:'Silkscreen',monospace;font-size:16px;margin-top:3px}
+  #qStat .v{color:var(--cream)}
+  #streakStat .v{color:var(--lime-hi)}
+  #scoreStat .v{color:var(--lime-hi)}
 
-  /* progress */
-  .track{height:6px;background:#e9e3d4;border-radius:999px;overflow:hidden;margin-bottom:20px}
-  .track > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s ease}
+  .progress{height:6px;background:rgba(0,0,0,.3);border-radius:99px;overflow:hidden;margin-bottom:20px}
+  .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--lime-lo),var(--lime));width:0;transition:width .3s ease}
 
-  /* Question card */
+  /* ===== Question card ===== */
   .qcard{
-    background:var(--card);border:1px solid var(--line);border-radius:22px;
-    box-shadow:var(--shadow);padding:26px 22px 22px;text-align:center;
-    position:relative;overflow:hidden;
+    background:linear-gradient(180deg,var(--olive-2),var(--olive-card));
+    border:1px solid rgba(159,217,42,.16);border-radius:20px;
+    padding:28px 22px 24px;text-align:center;margin-bottom:18px;position:relative;overflow:hidden;
   }
   .qcard::before{
-    content:"";position:absolute;inset:0 0 auto 0;height:5px;
-    background:linear-gradient(90deg,var(--teal),var(--gold),var(--coral));
+    content:"";position:absolute;inset:0 0 auto 0;height:4px;
+    background:linear-gradient(90deg,var(--lime-lo),var(--lime),var(--lime-hi));
   }
   .prompt-label{
-    font-family:'Prompt',sans-serif;font-weight:500;font-size:12px;
-    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
-    margin-bottom:14px;
+    font-family:'Silkscreen',monospace;font-size:9px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--cream-dim);opacity:.8;margin-bottom:14px;
   }
+  /* The loopless prompt glyph(s). Rendered in a no-loop style by stripping
+     the visual head via a subtle skew/weight cue is not possible in webfonts,
+     so we present the standard Thai but emphasise the comparison after answering. */
   .thai{
-    font-family:'Prompt',sans-serif;font-weight:500;
-    font-size:clamp(40px,12vw,60px);line-height:1.15;color:var(--ink);
-    word-break:break-word;margin:4px 0 6px;
+    font-family:'Sarabun',sans-serif;font-weight:500;
+    font-size:clamp(46px,15vw,72px);line-height:1.12;color:var(--cream);
+    word-break:break-word;margin:2px 0 4px;
   }
   .jp-hint{
-    font-size:13px;color:var(--muted);min-height:18px;margin-bottom:4px;
-    opacity:0;transition:opacity .25s;
+    font-family:'Prompt',sans-serif;font-size:13px;color:var(--cream-dim);
+    min-height:18px;margin-top:6px;opacity:0;transition:opacity .25s;font-weight:300;
   }
   .jp-hint.show{opacity:1}
 
-  /* Choices */
-  .choices{display:flex;flex-direction:column;gap:11px;margin-top:20px}
+  /* ===== Choices (reading options, stacked) ===== */
+  .choices{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
   .choice{
-    font-family:'Prompt',sans-serif;font-weight:500;font-size:19px;
-    background:#fff;border:1.6px solid var(--line);border-radius:14px;
-    padding:15px 16px;cursor:pointer;text-align:left;
+    font-family:'Sarabun',sans-serif;font-weight:600;font-size:19px;
+    color:var(--cream);background:linear-gradient(180deg,var(--olive-2),var(--olive-card));
+    border:1px solid rgba(159,217,42,.16);border-radius:14px;
+    padding:14px 14px;cursor:pointer;text-align:left;
     display:flex;align-items:stretch;gap:12px;
-    transition:border-color .15s, background .15s, transform .06s;
+    transition:transform .1s,border-color .14s,background .14s,box-shadow .14s;
   }
-  .choice:active{transform:scale(.99)}
+  .choice .dot{
+    width:26px;height:26px;border-radius:50%;flex:0 0 auto;align-self:center;
+    border:1px solid rgba(159,217,42,.3);display:grid;place-items:center;
+    font-family:'Silkscreen',monospace;font-size:10px;color:var(--cream-dim);
+  }
   .choice .ctxt{flex:1 1 auto;align-self:center}
   .choice .looped{
     display:none;flex:0 0 auto;align-self:stretch;align-items:center;
     font-family:'Sarabun',sans-serif;font-weight:600;
     font-size:22px;line-height:1;color:inherit;white-space:nowrap;
-    padding:4px 12px;border-radius:9px;
-    position:relative;margin-left:8px;
+    padding:4px 12px;border-radius:9px;position:relative;margin-left:8px;
   }
   .choice .looped.show{display:inline-flex}
-  /* full-height divider drawn as a solid bar, always visible on mobile */
   .choice .looped.show::before{
     content:"";position:absolute;left:-8px;top:6px;bottom:6px;
-    width:2px;border-radius:2px;background:currentColor;opacity:.45;
+    width:2px;border-radius:2px;background:currentColor;opacity:.4;
   }
-  .choice.correct .looped{color:var(--good-dk,#0a6359);background:rgba(15,138,125,.10)}
-  .choice.wrong .looped{color:var(--bad);background:rgba(231,84,63,.10)}
-  .choice .dot{
-    width:24px;height:24px;border-radius:50%;flex:0 0 auto;align-self:center;
-    border:1.6px solid var(--line);display:grid;place-items:center;
-    font-size:12px;font-weight:700;color:var(--muted);
-    font-family:'Prompt',sans-serif;
-  }
-  .choice:hover:not(.locked){border-color:var(--teal)}
-  .choice.correct{background:var(--good-bg);border-color:var(--good)}
-  .choice.correct .dot{background:var(--good);border-color:var(--good);color:#fff}
-  .choice.wrong{background:var(--bad-bg);border-color:var(--bad)}
-  .choice.wrong .dot{background:var(--bad);border-color:var(--bad);color:#fff}
+  .choice:hover:not(.locked){transform:translateY(-2px);border-color:var(--ring);box-shadow:0 8px 20px rgba(0,0,0,.35)}
+  .choice:active:not(.locked){transform:translateY(0)}
+  .choice:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
   .choice.locked{cursor:default}
-  .choice.dim{opacity:.5}
+  .choice.correct{
+    background:linear-gradient(180deg,rgba(159,217,42,.25),rgba(159,217,42,.12));
+    border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 0 18px rgba(159,217,42,.3);
+  }
+  .choice.correct .dot{background:var(--lime);border-color:var(--lime);color:var(--olive)}
+  .choice.correct .looped{color:var(--lime-hi);background:rgba(159,217,42,.12)}
+  .choice.wrong{
+    background:linear-gradient(180deg,rgba(224,83,58,.22),rgba(224,83,58,.1));
+    border-color:var(--bad);
+  }
+  .choice.wrong .dot{background:var(--bad);border-color:var(--bad);color:#fff}
+  .choice.wrong .looped{color:var(--bad-hi);background:rgba(224,83,58,.12)}
+  .choice.dim{opacity:.4}
 
-  /* feedback + next */
+  /* ===== Feedback ===== */
   .feedback{
-    margin-top:16px;min-height:24px;font-size:14px;text-align:center;
-    font-weight:600;opacity:0;transition:opacity .2s;
+    min-height:24px;margin-bottom:16px;text-align:center;
+    font-family:'Prompt',sans-serif;font-weight:500;font-size:14px;
+    opacity:0;transition:opacity .2s;
   }
   .feedback.show{opacity:1}
-  .feedback.ok{color:var(--good)}
-  .feedback.no{color:var(--bad)}
-  .feedback .ans{font-family:'Prompt',sans-serif}
-  .feedback .fb-th{font-family:'Sarabun',sans-serif;font-weight:600;font-size:18px;margin-left:4px}
-  .feedback.ok .fb-th{color:var(--good-dk,#0a6359)}
-  .feedback.no .fb-th{color:var(--bad)}
+  .feedback .fb-head{font-family:'Silkscreen',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+  .feedback.ok .fb-head{color:var(--lime)}
+  .feedback.no .fb-head{color:var(--bad-hi)}
+  .feedback .fb-th{font-family:'Sarabun',sans-serif;font-weight:600;font-size:20px;margin-left:6px}
+  .feedback.ok .fb-th{color:var(--lime-hi)}
+  .feedback.no .fb-th{color:var(--bad-hi)}
+  .feedback .fb-read{font-family:'Sarabun',sans-serif;font-weight:600}
 
-  .next{
-    width:100%;margin-top:16px;border:none;cursor:pointer;
-    font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;
-    color:#fff;background:var(--teal);border-radius:14px;padding:15px;
-    transition:background .15s, opacity .15s;
+  .next-btn{
+    display:block;width:100%;
+    font-family:'Silkscreen',monospace;font-size:13px;letter-spacing:.06em;
+    color:var(--olive);background:var(--lime);border:none;border-radius:13px;
+    padding:16px;cursor:pointer;
+    box-shadow:0 5px 16px rgba(159,217,42,.28);
+    transition:background .14s,transform .1s,opacity .14s;
   }
-  .next:hover{background:var(--teal-dk)}
-  .next:disabled{opacity:.4;cursor:not-allowed}
+  .next-btn:hover:not(:disabled){background:var(--lime-hi);transform:translateY(-2px)}
+  .next-btn:active:not(:disabled){transform:translateY(0)}
+  .next-btn:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+  .next-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
 
-  /* Result screen */
-  .result{
-    background:var(--card);border:1px solid var(--line);border-radius:22px;
-    box-shadow:var(--shadow);padding:30px 24px;text-align:center;
+  .quit-link{
+    display:block;text-align:center;margin-top:16px;
+    font-family:'Silkscreen',monospace;font-size:9px;letter-spacing:.08em;
+    color:var(--cream-dim);text-transform:uppercase;
+    background:none;border:none;cursor:pointer;opacity:.7;width:100%;padding:6px;
   }
-  .result h2{
-    font-family:'Prompt',sans-serif;font-weight:600;font-size:20px;margin-bottom:6px;
+  .quit-link:hover{opacity:1;color:var(--cream)}
+
+  /* ===== Result screen ===== */
+  .result-card{
+    background:linear-gradient(180deg,var(--olive-2),var(--olive-card));
+    border:1px solid rgba(159,217,42,.18);border-radius:22px;
+    padding:30px 24px;text-align:center;
   }
-  .result .big{
-    font-family:'Prompt',sans-serif;font-weight:700;
-    font-size:56px;line-height:1;margin:14px 0 2px;color:var(--teal);
-  }
-  .result .pct{font-family:'Prompt',sans-serif;color:var(--muted);font-size:15px;margin-bottom:6px}
-  .result .verdict{font-size:15px;font-weight:600;margin:10px 0 18px}
+  .result-eyebrow{font-family:'Silkscreen',monospace;font-size:11px;letter-spacing:.12em;color:var(--cream-dim);text-transform:uppercase;margin-bottom:6px}
+  .result-score{font-family:'Silkscreen',monospace;font-size:30px;color:var(--lime-hi);margin-bottom:4px;text-shadow:0 0 14px rgba(159,217,42,.3)}
+  .result-pct{font-family:'Prompt',sans-serif;font-weight:300;color:var(--cream-dim);font-size:13px;margin-bottom:14px}
+
   .achieve{
-    background:linear-gradient(160deg,#fffaf0,#fdf3e3);
-    border:1px solid var(--line);border-radius:18px;
-    padding:22px 18px 20px;margin:0 0 22px;
-    box-shadow:inset 0 1px 0 #fff;
+    background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.12));
+    border:1px solid rgba(159,217,42,.14);border-radius:18px;
+    padding:22px 18px 20px;margin:6px 0 20px;
   }
-  .achieve-icon{
-    font-size:64px;line-height:1;
-    animation:pop .55s cubic-bezier(.18,1.5,.4,1) both;
-  }
+  .achieve-icon{font-size:60px;line-height:1;animation:pop .55s cubic-bezier(.18,1.5,.4,1) both}
   @keyframes pop{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
-  .achieve-msg{
-    font-family:'Prompt',sans-serif;font-weight:700;font-size:19px;
-    margin-top:12px;color:var(--ink);line-height:1.35;
-  }
-  .achieve-sub{
-    font-size:13.5px;color:var(--muted);margin-top:7px;line-height:1.5;
-  }
-  .review{
-    text-align:left;border-top:1px dashed var(--line);padding-top:16px;margin-top:4px;
-  }
-  .review h3{
-    font-family:'Prompt',sans-serif;font-size:12px;font-weight:600;
-    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;
-  }
+  .achieve-msg{font-family:'Prompt',sans-serif;font-weight:600;font-size:18px;margin-top:12px;color:var(--cream);line-height:1.35}
+  .achieve-sub{font-family:'Prompt',sans-serif;font-weight:300;font-size:13px;color:var(--cream-dim);margin-top:8px;line-height:1.55;max-width:34ch;margin-left:auto;margin-right:auto}
+
+  .review{text-align:left;margin-top:6px}
+  .review-head{font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:10px}
   .miss{
-    display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:12px;
+    background:rgba(0,0,0,.22);border:1px solid rgba(224,83,58,.2);
+    border-radius:12px;padding:11px 13px;margin-bottom:8px;
   }
-  .miss:last-child{border-bottom:none}
-  .miss .mth{font-family:'Prompt',sans-serif;font-weight:500;font-size:24px;min-width:64px}
-  .miss .mbody{flex:1;font-size:13px;line-height:1.5}
-  .miss .mbody .you{color:var(--bad)}
-  .miss .mbody .cor{color:var(--good);font-family:'Prompt',sans-serif;font-weight:600}
-  .miss .mbody .jp{color:var(--muted)}
-  .miss .mbody .rv-th{font-family:'Sarabun',sans-serif;font-weight:600;font-size:17px;margin-left:4px}
-  .miss .mbody .you-th{color:var(--bad)}
-  .miss .mbody .cor-th{color:var(--good)}
-  .perfect{font-size:15px;color:var(--good);font-weight:600;padding:8px 0}
-  .again{
-    width:100%;margin-top:22px;border:none;cursor:pointer;
-    font-family:'Prompt',sans-serif;font-weight:600;font-size:16px;
-    color:#fff;background:var(--coral);border-radius:14px;padding:16px;
+  .miss .mth{font-family:'Sarabun',sans-serif;font-weight:600;font-size:26px;color:var(--cream);flex:0 0 auto;min-width:54px}
+  .miss .mbody{flex:1;min-width:0;font-family:'Prompt',sans-serif;font-weight:300;font-size:12.5px;line-height:1.5;color:var(--cream-dim)}
+  .miss .mbody .you{color:var(--bad-hi);font-family:'Sarabun',sans-serif;font-weight:600}
+  .miss .mbody .cor{color:var(--lime-hi);font-family:'Sarabun',sans-serif;font-weight:600}
+  .miss .mbody .rv-th{font-family:'Sarabun',sans-serif;font-weight:600}
+  .perfect{font-family:'Prompt',sans-serif;font-weight:500;font-size:14px;color:var(--lime);padding:6px 0}
+
+  .again-btn{
+    display:block;width:100%;margin-top:22px;
+    font-family:'Silkscreen',monospace;font-size:14px;letter-spacing:.06em;
+    color:var(--olive);background:var(--lime);border:none;border-radius:14px;
+    padding:18px;cursor:pointer;box-shadow:0 6px 20px rgba(159,217,42,.3);
+    transition:background .14s,transform .1s;
   }
-  .again:hover{filter:brightness(.95)}
-  footer{text-align:center;margin-top:22px;font-size:11px;color:var(--muted);line-height:1.6}
+  .again-btn:hover{background:var(--lime-hi);transform:translateY(-2px)}
+  .again-btn:active{transform:translateY(0)}
+  .again-btn:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+
+  /* ===== Footer ===== */
+  footer{
+    margin-top:30px;text-align:center;
+    font-family:'Silkscreen',monospace;font-size:9px;letter-spacing:.06em;
+    color:var(--cream-dim);opacity:.7;line-height:1.8;
+  }
+  footer .made{margin-bottom:14px}
+  .social{display:flex;justify-content:center;gap:14px;margin-bottom:10px}
+  .social a{
+    width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+    background:rgba(159,217,42,.08);border:1px solid rgba(159,217,42,.22);
+    color:var(--lime);text-decoration:none;
+    transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .social a:hover{transform:translateY(-2px);background:rgba(159,217,42,.16);box-shadow:0 6px 16px rgba(159,217,42,.22)}
+  .social a:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
+  .social a svg{width:21px;height:21px;display:block;pointer-events:none}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+  }
 </style>
 </head>
 <body>
+<div class="embers" id="embers" aria-hidden="true"></div>
 <div class="wrap">
-  <header>
-    <div class="brand">
-      <span class="eyebrow">Thai Reading</span>
-      <span class="ttl">Loopless Font Master</span>
-    </div>
-    <span class="badge" id="poolBadge">Powered by Moonoi Monsoon</span>
-  </header>
 
-  <!-- QUIZ -->
-  <section id="quiz">
-    <div class="stats">
-      <div class="stat"><div class="k">Question</div><div class="v"><span id="qnum">1</span><small>/10</small></div></div>
+  <!-- ============ START SCREEN ============ -->
+  <section id="startScreen">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="11">
+            <path d="M16 76 V36 L33 58 L50 36 V76" stroke="#9FD92A"/>
+            <path d="M50 76 V36 L67 58 L84 36 V76" stroke="#cdeb5f"/>
+          </g>
+        </svg>
+      </div>
+      <div class="brand-name">Moonoi Monsoon</div>
+    </div>
+    <h1 class="title">LOOPLESS FONT MASTER</h1>
+    <p class="subtitle">Thai loses its loops in display type.<br><b>Train your eye to read it anyway.</b></p>
+
+    <div class="px-rule" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+    <div class="explain">
+      <div class="explain-label">▸ The loopless trap</div>
+      <div class="demo" aria-hidden="true">
+        <div class="demo-col">
+          <div class="demo-glyph">บ</div>
+          <div class="demo-cap">with loop</div>
+        </div>
+        <div class="demo-arrow">→</div>
+        <div class="demo-col">
+          <div class="demo-glyph loopless">น</div>
+          <div class="demo-cap">looks alike</div>
+        </div>
+      </div>
+      <p class="explain-text">In loopless fonts, letters like บ ป น ผ พ collapse into near-twins. Read each word, pick its correct pronunciation, and learn to tell the lookalikes apart.</p>
+    </div>
+
+    <button class="start-btn" id="startBtn">▸ START</button>
+
+    <div class="coffee-divider"><i></i><span>support this project</span><i></i></div>
+    <a class="coffee-btn" href="https://buymeacoffee.com/moonoimonsoon" target="_blank" rel="noopener">
+      <span class="cup">☕</span><span>Buy Me a Coffee</span>
+    </a>
+
+    <footer>
+      <div class="made">หมูน้อย · little pig · Moonoi Monsoon</div>
+      <div class="social">
+        <a href="https://www.instagram.com/moonoi_monsoon" target="_blank" rel="noopener noreferrer" aria-label="Moonoi Monsoon on Instagram">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5.4" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17.4" cy="6.6" r="1.4" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="https://moonoimonsoon.github.io" target="_blank" rel="noopener noreferrer" aria-label="Moonoi Monsoon hub site">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <g stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="currentColor" stroke-width="11">
+              <path d="M16 76 V36 L33 58 L50 36 V76"/>
+              <path d="M50 76 V36 L67 58 L84 36 V76"/>
+            </g>
+          </svg>
+        </a>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ============ GAME SCREEN ============ -->
+  <section id="quiz" class="hidden">
+    <div class="game-header">
+      <svg class="hdr-mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="12">
+          <path d="M16 76 V36 L33 58 L50 36 V76" stroke="#9FD92A"/>
+          <path d="M50 76 V36 L67 58 L84 36 V76" stroke="#cdeb5f"/>
+        </g>
+      </svg>
+      <span class="hdr-name">Moonoi Monsoon</span>
+      <span class="hdr-tag px">LOOPLESS</span>
+    </div>
+
+    <div class="statbar">
+      <div class="stat" id="qStat"><div class="k">Question</div><div class="v"><span id="qnum">1</span>/10</div></div>
       <div class="stat" id="streakStat"><div class="k">Streak</div><div class="v" id="streak">0</div></div>
       <div class="stat" id="scoreStat"><div class="k">Score</div><div class="v" id="score">0</div></div>
     </div>
-    <div class="track"><i id="bar"></i></div>
+    <div class="progress"><i id="bar"></i></div>
 
     <div class="qcard">
-      <div class="prompt-label">How do you read this?</div>
-      <div class="thai" id="thai">—</div>
+      <div class="prompt-label">▸ How do you read this?</div>
+      <div class="thai" id="thai" lang="th">—</div>
       <div class="jp-hint" id="jp"></div>
-      <div class="choices" id="choices"></div>
-      <div class="feedback" id="feedback"></div>
-      <button class="next" id="next" disabled>Next →</button>
     </div>
+
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+
+    <button class="next-btn" id="next" disabled>▸ NEXT</button>
+    <button class="quit-link" id="quitBtn">✕ Quit to menu</button>
   </section>
 
-  <!-- RESULT -->
-  <section id="resultScreen" style="display:none">
-    <div class="result">
-      <h2>Quiz complete</h2>
-      <div class="big" id="finalScore">0</div>
-      <div class="pct" id="finalPct">0 / 10 · 0%</div>
-      <div class="verdict" id="verdict"></div>
+  <!-- ============ RESULT SCREEN ============ -->
+  <section id="resultScreen" class="hidden">
+    <div class="result-card">
+      <div class="result-eyebrow">▸ Quiz complete</div>
+      <div class="result-score px" id="finalScore">0 / 10</div>
+      <div class="result-pct" id="finalPct">0%</div>
+
       <div class="achieve" id="achieve">
         <div class="achieve-icon" id="achieveIcon">🍋</div>
         <div class="achieve-msg" id="achieveMsg"></div>
         <div class="achieve-sub" id="achieveSub"></div>
       </div>
+
       <div class="review" id="review"></div>
-      <button class="again" id="again">Play again</button>
+
+      <button class="again-btn" id="again">▸ PLAY AGAIN</button>
+
+      <div class="coffee-divider"><i></i><span>enjoyed it?</span><i></i></div>
+      <a class="coffee-btn" href="https://buymeacoffee.com/moonoimonsoon" target="_blank" rel="noopener">
+        <span class="cup">☕</span><span>Buy Me a Coffee</span>
+      </a>
+
+      <button class="quit-link" id="menuBtn">✕ Back to menu</button>
     </div>
+    <footer>หมูน้อย · little pig · Moonoi Monsoon</footer>
   </section>
 
-  <footer>
-    Loopless script reading · tell confusable letters apart<br>
-    Pronunciation: mid (a) · low (à) · falling (â) · high (á) · rising (ă)
-  </footer>
 </div>
 
 <script>
-/* ====== VOCAB DATA (Thai spelling + phonetic reading, L13–24) ====== */
+/* ====== VOCAB DATA (Thai spelling + phonetic reading + meaning) ====== */
 const VOCAB=[{"th": "ชอบ", "rd": "chɔ̂ɔp", "en": "to like"}, {"th": "แพ้", "rd": "phɛ́ɛ", "en": "to be allergic to"}, {"th": "เสื้อ", "rd": "sʉ̂ʉa", "en": "shirt / top"}, {"th": "เสื้อแขนยาว", "rd": "sʉ̂ʉa-khɛ̆ɛn-yaao", "en": "long-sleeve top"}, {"th": "เสื้อเชิ้ต", "rd": "sʉ̂ʉa-chə́ət", "en": "dress shirt"}, {"th": "เสื้อยืด", "rd": "sʉ̂ʉa-yʉ̂ʉt", "en": "T-shirt"}, {"th": "กางเกง", "rd": "gaang-geeng", "en": "trousers"}, {"th": "กระโปรง", "rd": "gra-bproong", "en": "skirt"}, {"th": "กระโปรงยาว", "rd": "gra-bproong-yaao", "en": "long skirt"}, {"th": "สร้อยคอ", "rd": "sɔ̂ɔi-khɔɔ", "en": "necklace"}, {"th": "สร้อยข้อมือ", "rd": "sɔ̂ɔi-khɔ̂ɔ-mʉʉ", "en": "bracelet"}, {"th": "แหวน", "rd": "wɛ̆ɛn", "en": "ring"}, {"th": "กำไล", "rd": "gam-lai", "en": "bangle"}, {"th": "แว่น", "rd": "wɛ̂n", "en": "glasses"}, {"th": "แว่นกันแดด", "rd": "wɛ̂n-gan-dɛ̀ɛt", "en": "sunglasses"}, {"th": "ดูดี", "rd": "duu-dii", "en": "to look good"}, {"th": "เชย", "rd": "chəəi", "en": "old-fashioned"}, {"th": "แพง", "rd": "phɛɛng", "en": "expensive"}, {"th": "พอดี", "rd": "phɔɔ-dii", "en": "to fit just right"}, {"th": "เงิน", "rd": "ngən", "en": "silver / money"}, {"th": "ทอง", "rd": "thɔɔng", "en": "gold"}, {"th": "ใบ", "rd": "bai", "en": "classifier (bags/hats)"}, {"th": "วง", "rd": "wong", "en": "classifier (rings)"}, {"th": "เรือน", "rd": "rʉan", "en": "classifier (clocks)"}, {"th": "อัน", "rd": "an", "en": "classifier (small items)"}, {"th": "ราคา", "rd": "raa-khaa", "en": "price"}, {"th": "โปรแกรม", "rd": "bproo-grɛɛm", "en": "program"}, {"th": "ปี", "rd": "bpii", "en": "year"}, {"th": "หยวน", "rd": "yuan", "en": "yuan"}, {"th": "เยน", "rd": "yen", "en": "yen"}, {"th": "นาที", "rd": "naa-thii", "en": "minute"}, {"th": "วัน", "rd": "wan", "en": "day"}, {"th": "เบา", "rd": "bao", "en": "light (weight)"}, {"th": "ผอม", "rd": "phɔ̆ɔm", "en": "thin / slim"}, {"th": "ยาว", "rd": "yaao", "en": "long"}, {"th": "เร็ว", "rd": "reo", "en": "fast"}, {"th": "ไกล", "rd": "glai", "en": "far"}, {"th": "แก่", "rd": "gɛ̀ɛ", "en": "old (aged)"}, {"th": "อ่อน", "rd": "ɔ̀ɔn", "en": "young / soft"}, {"th": "หล่อ", "rd": "lɔ̀ɔ", "en": "handsome"}, {"th": "นาน", "rd": "naan", "en": "long (time)"}, {"th": "เดือน", "rd": "dʉan", "en": "month / moon"}, {"th": "เพราะ", "rd": "phrɔ́", "en": "because"}, {"th": "แข็งแรง", "rd": "khɛ̆ng-rɛɛng", "en": "strong / healthy"}, {"th": "ความชอบ", "rd": "khwaam-chɔ̂ɔp", "en": "preference"}, {"th": "ตา", "rd": "dtaa", "en": "eye"}, {"th": "ยาย", "rd": "yaai", "en": "grandmother (maternal)"}, {"th": "ลุง", "rd": "lung", "en": "uncle (elder)"}, {"th": "อา", "rd": "aa", "en": "aunt/uncle (younger)"}, {"th": "น้องชาย", "rd": "nɔ́ɔng-chaai", "en": "younger brother"}, {"th": "ภรรยา", "rd": "phan-ra-yaa", "en": "wife (formal)"}, {"th": "เมีย", "rd": "mia", "en": "wife (casual)"}, {"th": "แฟน", "rd": "fɛɛn", "en": "partner / boyfriend"}, {"th": "เพื่อน", "rd": "phʉ̂an", "en": "friend"}, {"th": "เพิ่ม", "rd": "phə̂əm", "en": "to add / increase"}, {"th": "ดัง", "rd": "dang", "en": "loud / famous"}, {"th": "ดี", "rd": "dii", "en": "good"}, {"th": "ร้อน", "rd": "rɔ́ɔn", "en": "hot"}, {"th": "แย่", "rd": "yɛ̂ɛ", "en": "terrible"}, {"th": "น้อย", "rd": "nɔ́ɔi", "en": "few / little"}, {"th": "ซื้อ", "rd": "sʉ́ʉ", "en": "to buy"}, {"th": "ทำ", "rd": "tham", "en": "to do / make"}, {"th": "เตรียม", "rd": "dtriam", "en": "to prepare"}, {"th": "แบ่ง", "rd": "bɛ̀ng", "en": "to divide / share"}, {"th": "ทาน", "rd": "thaan", "en": "to eat (polite)"}, {"th": "อร่อย", "rd": "a-rɔ̀ɔi", "en": "delicious"}, {"th": "ครัวซองต์", "rd": "khrua-sɔɔng", "en": "croissant"}, {"th": "พาย", "rd": "phaai", "en": "pie"}, {"th": "แตงโม", "rd": "dtɛɛng-moo", "en": "watermelon"}, {"th": "มะนาว", "rd": "ma-naao", "en": "lime"}, {"th": "เครื่องดื่ม", "rd": "khrʉ̂ang-dʉ̀ʉm", "en": "drink"}, {"th": "กาแฟ", "rd": "gaa-fɛɛ", "en": "coffee"}, {"th": "ชา", "rd": "chaa", "en": "tea"}, {"th": "ช็อกโกแลต", "rd": "chɔ́k-goo-lɛ́ɛt", "en": "chocolate"}, {"th": "นม", "rd": "nom", "en": "milk"}, {"th": "นมวัว", "rd": "nom-wua", "en": "cow's milk"}, {"th": "ทนาย", "rd": "tha-naai", "en": "lawyer"}, {"th": "อาจารย์", "rd": "aa-jaan", "en": "teacher / professor"}, {"th": "ครู", "rd": "khruu", "en": "teacher (school)"}, {"th": "สบาย ๆ", "rd": "sa-baai-sa-baai", "en": "easygoing"}, {"th": "จริงใจ", "rd": "jing-jai", "en": "sincere"}, {"th": "ใจดี", "rd": "jai-dii", "en": "kind"}, {"th": "ใจเย็น", "rd": "jai-yen", "en": "calm"}, {"th": "ใจร้อน", "rd": "jai-rɔ́ɔn", "en": "hot-tempered"}, {"th": "ใจแคบ", "rd": "jai-khɛ̂ɛp", "en": "narrow-minded"}, {"th": "เขย", "rd": "khə̆əi", "en": "male in-law"}, {"th": "น้องเขย", "rd": "nɔ́ɔng-khə̆əi", "en": "younger sister's husband"}, {"th": "แต่งงาน", "rd": "dtɛ̀ng-ngaan", "en": "to marry"}, {"th": "เรียนต่อ", "rd": "rian-dtɔ̀ɔ", "en": "to continue studies"}, {"th": "ระวัง", "rd": "ra-wang", "en": "to be careful"}, {"th": "ห้องนอน", "rd": "hɔ̂ɔng-nɔɔn", "en": "bedroom"}, {"th": "ห้องครัว", "rd": "hɔ̂ɔng-khrua", "en": "kitchen"}, {"th": "ระเบียง", "rd": "ra-biang", "en": "balcony"}, {"th": "ประตู", "rd": "bpra-dtuu", "en": "door"}, {"th": "บันได", "rd": "ban-dai", "en": "stairs"}, {"th": "โซฟา", "rd": "soo-faa", "en": "sofa"}, {"th": "แอร์", "rd": "ɛɛ", "en": "air conditioner"}, {"th": "ดารา", "rd": "daa-raa", "en": "celebrity"}, {"th": "ตัวละคร", "rd": "dtua-la-khɔɔn", "en": "character (in a story)"}, {"th": "อารมณ์", "rd": "aa-rom", "en": "emotion / mood"}, {"th": "อารมณ์ดี", "rd": "aa-rom-dii", "en": "in a good mood"}, {"th": "สบายใจ", "rd": "sa-baai-jai", "en": "to feel at ease"}, {"th": "ดีใจ", "rd": "dii-jai", "en": "glad"}, {"th": "อาย", "rd": "aai", "en": "shy / embarrassed"}, {"th": "งง", "rd": "ngong", "en": "confused"}, {"th": "รำคาญ", "rd": "ram-khaan", "en": "annoyed"}, {"th": "ออนแอร์", "rd": "ɔɔn-ɛɛ", "en": "to be on air"}, {"th": "เรื่อง", "rd": "rʉ̂ʉang", "en": "story / classifier"}, {"th": "หมอ", "rd": "mɔ̆ɔ", "en": "doctor"}, {"th": "พยาบาล", "rd": "pha-yaa-baan", "en": "nurse"}, {"th": "คอ", "rd": "khɔɔ", "en": "neck / throat"}, {"th": "ตัว", "rd": "dtua", "en": "body / classifier"}, {"th": "แขน", "rd": "khɛ̆ɛn", "en": "arm"}, {"th": "มือ", "rd": "mʉʉ", "en": "hand"}, {"th": "ศอก", "rd": "sɔ̀ɔk", "en": "elbow"}, {"th": "บอกอาการ", "rd": "bɔ̀ɔk-aa-gaan", "en": "to describe symptoms"}, {"th": "เป็นลม", "rd": "bpen-lom", "en": "to faint"}, {"th": "เป็นภูมิแพ้", "rd": "bpen-phuum-phɛ́ɛ", "en": "to have an allergy"}, {"th": "จาม", "rd": "jaam", "en": "to sneeze"}, {"th": "ไอ", "rd": "ai", "en": "to cough"}, {"th": "ตัวร้อน", "rd": "dtua-rɔ́ɔn", "en": "to have a fever"}, {"th": "อาเจียน", "rd": "aa-jian", "en": "to vomit"}, {"th": "เมา", "rd": "mao", "en": "to be drunk"}, {"th": "คัน", "rd": "khan", "en": "itchy"}, {"th": "เกา", "rd": "gao", "en": "to scratch"}, {"th": "เมื่อย", "rd": "mʉ̂ai", "en": "sore / stiff"}, {"th": "หอม", "rd": "hɔ̆ɔm", "en": "to smell good"}, {"th": "แปลก", "rd": "bplɛ̀ɛk", "en": "strange"}, {"th": "เดิม", "rd": "dəəm", "en": "original / same"}, {"th": "อีเมล", "rd": "ii-meeo", "en": "email"}, {"th": "ไลน์", "rd": "lai", "en": "LINE (app)"}, {"th": "กะเพรา", "rd": "ga-phrao", "en": "holy basil"}, {"th": "กระเทียม", "rd": "gra-thiam", "en": "garlic"}, {"th": "เบียร์", "rd": "bia", "en": "beer"}, {"th": "จาน", "rd": "jaan", "en": "plate"}, {"th": "กระป๋อง", "rd": "gra-bpɔ̆ɔng", "en": "can"}, {"th": "ขึ้น", "rd": "khʉ̂n", "en": "to go up"}, {"th": "ลง", "rd": "long", "en": "to go down"}, {"th": "ออก", "rd": "ɔ̀ɔk", "en": "to exit"}, {"th": "กล่อง", "rd": "glɔ̀ng", "en": "box"}, {"th": "โจร", "rd": "joon", "en": "robber"}, {"th": "ขโมย", "rd": "kha-mooi", "en": "thief"}, {"th": "ขอทาน", "rd": "khɔ̆ɔ-thaan", "en": "beggar"}, {"th": "เถอะ", "rd": "thə̀", "en": "let's / do (suggestion)"}, {"th": "ชน", "rd": "chon", "en": "to collide"}, {"th": "ต่อย", "rd": "dtɔ̀ɔi", "en": "to punch / sting"}, {"th": "ตี", "rd": "dtii", "en": "to hit"}, {"th": "โกง", "rd": "goong", "en": "to cheat"}, {"th": "หลอก", "rd": "lɔ̀ɔk", "en": "to deceive"}, {"th": "แกล้ง", "rd": "glɛ̂ng", "en": "to tease / bully"}, {"th": "แตก", "rd": "dtɛ̀ɛk", "en": "to break / shatter"}, {"th": "ดูแล", "rd": "duu-lɛɛ", "en": "to take care of"}, {"th": "ทำแผล", "rd": "tham-phlɛ̆ɛ", "en": "to dress a wound"}, {"th": "ยา", "rd": "yaa", "en": "medicine"}, {"th": "ยากิน", "rd": "yaa-gin", "en": "oral medicine"}, {"th": "ยาทา", "rd": "yaa-thaa", "en": "topical cream"}, {"th": "เลือด", "rd": "lʉ̂ʉat", "en": "blood"}, {"th": "แผล", "rd": "phlɛ̆ɛ", "en": "wound"}, {"th": "กล่องพยาบาล", "rd": "glɔ̀ng-pha-yaa-baan", "en": "first-aid kit"}, {"th": "แมลง", "rd": "ma-lɛɛng", "en": "insect"}, {"th": "แมง", "rd": "mɛɛng", "en": "bug / arachnid"}, {"th": "ยุง", "rd": "yung", "en": "mosquito"}, {"th": "ผึ้ง", "rd": "phʉ̂ng", "en": "bee"}, {"th": "ต่อ", "rd": "dtɔ̀ɔ", "en": "wasp / to extend"}, {"th": "แมงมุม", "rd": "mɛɛng-mum", "en": "spider"}, {"th": "แมงป่อง", "rd": "mɛɛng-bpɔ̀ɔng", "en": "scorpion"}, {"th": "แมงกะพรุน", "rd": "mɛɛng-ga-phrun", "en": "jellyfish"}, {"th": "อันตราย", "rd": "an-dta-raai", "en": "dangerous"}, {"th": "ปลอดภัย", "rd": "bplɔ̀ɔt-phai", "en": "safe"}, {"th": "อำเภอ", "rd": "am-phəə", "en": "district"}, {"th": "แขวง", "rd": "khwɛ̆ɛng", "en": "sub-district (Bangkok)"}, {"th": "ตำบล", "rd": "dtam-bon", "en": "sub-district (rural)"}, {"th": "ชุมชน", "rd": "chum-chon", "en": "community"}, {"th": "ทาง", "rd": "thaang", "en": "way / direction"}, {"th": "เหนือ", "rd": "nʉ̆ʉa", "en": "north"}, {"th": "ตะวันออก", "rd": "dta-wan-ɔ̀ɔk", "en": "east"}, {"th": "เจดีย์", "rd": "jee-dii", "en": "pagoda"}, {"th": "วัง", "rd": "wang", "en": "palace"}, {"th": "ดอย", "rd": "dɔɔi", "en": "mountain (northern)"}, {"th": "เขื่อน", "rd": "khʉ̀ʉan", "en": "dam"}, {"th": "คลอง", "rd": "khlɔɔng", "en": "canal"}, {"th": "ทะเล", "rd": "tha-lee", "en": "sea"}, {"th": "เกาะ", "rd": "gɔ̀", "en": "island"}, {"th": "ฤดู", "rd": "rʉ́-duu", "en": "season"}, {"th": "ดูดาว", "rd": "duu-daao", "en": "to stargaze"}, {"th": "ล่องแพ", "rd": "lɔ̂ng-phɛɛ", "en": "to go rafting"}, {"th": "พายเรือ", "rd": "phaai-rʉa", "en": "to row a boat"}, {"th": "จะ", "rd": "jà", "en": "will (future)"}, {"th": "นะ", "rd": "ná", "en": "particle (softener)"}, {"th": "และ", "rd": "lɛ́", "en": "and"}, {"th": "กับ", "rd": "gàp", "en": "with"}, {"th": "รัก", "rd": "rák", "en": "to love"}, {"th": "จับ", "rd": "jàp", "en": "to grab"}, {"th": "ทัน", "rd": "than", "en": "in time"}, {"th": "ขับ", "rd": "khàp", "en": "to drive"}, {"th": "ผิด", "rd": "phìt", "en": "wrong"}, {"th": "คิด", "rd": "khít", "en": "to think"}, {"th": "ติด", "rd": "dtìt", "en": "stuck / attached"}, {"th": "ริม", "rd": "rim", "en": "edge"}, {"th": "ชิด", "rd": "chít", "en": "close to"}, {"th": "ลิง", "rd": "ling", "en": "monkey"}, {"th": "ถุง", "rd": "thŭng", "en": "bag"}, {"th": "ลุก", "rd": "lúk", "en": "to get up"}, {"th": "ทุก", "rd": "thúk", "en": "every"}, {"th": "บุญ", "rd": "bun", "en": "merit"}, {"th": "คุณ", "rd": "khun", "en": "you (polite)"}, {"th": "สุข", "rd": "sùk", "en": "happiness"}, {"th": "เด็ก", "rd": "dèk", "en": "child"}, {"th": "เผ็ด", "rd": "phèt", "en": "spicy"}, {"th": "เย็น", "rd": "yen", "en": "cool / evening"}, {"th": "เซ็น", "rd": "sen", "en": "to sign"}, {"th": "เป็น", "rd": "bpen", "en": "to be"}, {"th": "เล่น", "rd": "lên", "en": "to play"}, {"th": "คน", "rd": "khon", "en": "person"}, {"th": "ฝน", "rd": "fŏn", "en": "rain"}, {"th": "จน", "rd": "jon", "en": "poor / until"}, {"th": "ลม", "rd": "lom", "en": "wind"}, {"th": "ผม", "rd": "phŏm", "en": "I (male) / hair"}, {"th": "ต้น", "rd": "dtôn", "en": "tree / beginning"}, {"th": "แกะ", "rd": "gɛ̀", "en": "sheep"}, {"th": "แคะ", "rd": "khɛ́", "en": "to pick out"}, {"th": "เลอะ", "rd": "lə́", "en": "messy"}, {"th": "มา", "rd": "maa", "en": "to come"}, {"th": "ปลา", "rd": "bplaa", "en": "fish"}, {"th": "ขา", "rd": "khăa", "en": "leg"}, {"th": "หมา", "rd": "măa", "en": "dog"}, {"th": "บ้าน", "rd": "bâan", "en": "house"}, {"th": "มี", "rd": "mii", "en": "to have"}, {"th": "สี", "rd": "sĭi", "en": "color"}, {"th": "หนี", "rd": "nĭi", "en": "to flee"}, {"th": "หมู", "rd": "mŭu", "en": "pig"}, {"th": "ดู", "rd": "duu", "en": "to look"}, {"th": "รู้", "rd": "rúu", "en": "to know"}, {"th": "ปู", "rd": "bpuu", "en": "crab"}, {"th": "งู", "rd": "nguu", "en": "snake"}, {"th": "เท", "rd": "thee", "en": "to pour"}, {"th": "เก", "rd": "gee", "en": "to dodge"}, {"th": "เซ", "rd": "see", "en": "to stagger"}, {"th": "เมล์", "rd": "mee", "en": "mail / bus"}, {"th": "โต", "rd": "dtoo", "en": "big / to grow"}, {"th": "โชค", "rd": "chôok", "en": "luck"}, {"th": "โมง", "rd": "moong", "en": "o'clock"}, {"th": "โง่", "rd": "ngôo", "en": "foolish"}, {"th": "พอ", "rd": "phɔɔ", "en": "enough"}, {"th": "รอ", "rd": "rɔɔ", "en": "to wait"}, {"th": "ขอ", "rd": "khɔ̆ɔ", "en": "to ask for"}, {"th": "สอน", "rd": "sɔ̆ɔn", "en": "to teach"}, {"th": "แม่", "rd": "mɛ̂ɛ", "en": "mother"}, {"th": "แดง", "rd": "dɛɛng", "en": "red"}, {"th": "เธอ", "rd": "thəə", "en": "you / she"}, {"th": "เจอ", "rd": "jəə", "en": "to meet"}, {"th": "เดิน", "rd": "dəən", "en": "to walk"}, {"th": "เกิด", "rd": "gə̀ət", "en": "to be born"}, {"th": "คือ", "rd": "khʉʉ", "en": "to be / namely"}, {"th": "ลือ", "rd": "lʉʉ", "en": "to spread (rumor)"}, {"th": "ถือ", "rd": "thʉ̆ʉ", "en": "to hold"}, {"th": "เสีย", "rd": "sĭa", "en": "to be spoiled"}, {"th": "เรียน", "rd": "rian", "en": "to study"}, {"th": "เขียน", "rd": "khĭan", "en": "to write"}, {"th": "เปลี่ยน", "rd": "bplìan", "en": "to change"}, {"th": "เรือ", "rd": "rʉa", "en": "boat"}, {"th": "เสือ", "rd": "sʉ̆ʉa", "en": "tiger"}, {"th": "เมือง", "rd": "mʉang", "en": "city"}, {"th": "เกลือ", "rd": "glʉa", "en": "salt"}, {"th": "วัว", "rd": "wua", "en": "cow"}, {"th": "รวย", "rd": "ruai", "en": "rich"}, {"th": "ดาว", "rd": "daao", "en": "star"}, {"th": "สวย", "rd": "sŭai", "en": "beautiful"}, {"th": "ไป", "rd": "bpai", "en": "to go"}, {"th": "ใจ", "rd": "jai", "en": "heart"}, {"th": "ใหม่", "rd": "mài", "en": "new"}, {"th": "ไหน", "rd": "năi", "en": "where"}, {"th": "ใคร", "rd": "khrai", "en": "who"}, {"th": "เรา", "rd": "rao", "en": "we"}, {"th": "เขา", "rd": "khăo", "en": "he / she / mountain"}, {"th": "เก้า", "rd": "gâo", "en": "nine"}, {"th": "เอา", "rd": "ao", "en": "to take / want"}, {"th": "สาว", "rd": "săao", "en": "young woman"}, {"th": "น้ำ", "rd": "náam", "en": "water"}, {"th": "คำ", "rd": "kham", "en": "word"}, {"th": "ดำ", "rd": "dam", "en": "black"}, {"th": "จำ", "rd": "jam", "en": "to remember"}, {"th": "นำ", "rd": "nam", "en": "to lead"}, {"th": "หิว", "rd": "hĭu", "en": "hungry"}, {"th": "นิ้ว", "rd": "níu", "en": "finger"}, {"th": "เคี้ยว", "rd": "khíao", "en": "to chew"}, {"th": "เลว", "rd": "leeo", "en": "bad / evil"}, {"th": "เดี๋ยว", "rd": "dĭao", "en": "in a moment"}, {"th": "แมว", "rd": "mɛɛo", "en": "cat"}, {"th": "แล้ว", "rd": "lɛ́ɛo", "en": "already"}, {"th": "แห้ว", "rd": "hɛ̂ɛo", "en": "water chestnut"}, {"th": "โดย", "rd": "dooi", "en": "by"}, {"th": "โรย", "rd": "rooi", "en": "to sprinkle"}, {"th": "ห้อย", "rd": "hɔ̂ɔi", "en": "to hang"}, {"th": "ช่วย", "rd": "chûai", "en": "to help"}, {"th": "ด้วย", "rd": "dûai", "en": "also / with"}, {"th": "ป่วย", "rd": "bpùai", "en": "sick"}, {"th": "เหนื่อย", "rd": "nʉ̀ai", "en": "tired"}, {"th": "สาย", "rd": "săai", "en": "late / line"}, {"th": "ขาย", "rd": "khăai", "en": "to sell"}, {"th": "หาย", "rd": "hăai", "en": "to disappear"}, {"th": "ง่าย", "rd": "ngâai", "en": "easy"}, {"th": "คอย", "rd": "khɔɔi", "en": "to wait for"}, {"th": "ร้อย", "rd": "rɔ́ɔi", "en": "hundred"}, {"th": "ปล่อย", "rd": "bplɔ̀i", "en": "to release"}, {"th": "ครับ", "rd": "khráp", "en": "polite particle (m)"}, {"th": "ค่ะ", "rd": "khâ", "en": "polite particle (f)"}, {"th": "ความ", "rd": "khwaam", "en": "-ness (nominalizer)"}, {"th": "ครอบครัว", "rd": "khrɔ̂ɔp-khrua", "en": "family"}, {"th": "คะแนน", "rd": "kha-nɛɛn", "en": "score / points"}, {"th": "ศึกษา", "rd": "sʉ̀k-săa", "en": "to study / education"}, {"th": "ศัตรู", "rd": "sàt-truu", "en": "enemy"}, {"th": "ศาล", "rd": "săan", "en": "court"}, {"th": "ศูนย์", "rd": "sŭun", "en": "center / zero"}, {"th": "เศรษฐี", "rd": "sèet-thĭi", "en": "rich person"}, {"th": "เงา", "rd": "ngao", "en": "shadow"}, {"th": "งาน", "rd": "ngaan", "en": "work / party"}, {"th": "ง่วง", "rd": "ngûang", "en": "sleepy"}, {"th": "เงียบ", "rd": "ngîap", "en": "quiet"}, {"th": "จอง", "rd": "jɔɔng", "en": "to reserve"}, {"th": "จ่าย", "rd": "jàai", "en": "to pay"}, {"th": "จาก", "rd": "jàak", "en": "from"}, {"th": "จมูก", "rd": "ja-mùuk", "en": "nose"}, {"th": "ฉัน", "rd": "chăn", "en": "I / me"}, {"th": "ฉลาด", "rd": "cha-làat", "en": "clever"}, {"th": "ฉาก", "rd": "chàak", "en": "scene / screen"}, {"th": "ฉีด", "rd": "chìit", "en": "to inject"}, {"th": "ฉุน", "rd": "chŭn", "en": "pungent"}, {"th": "เฉย", "rd": "chə̆əi", "en": "indifferent"}, {"th": "ช้าง", "rd": "cháang", "en": "elephant"}, {"th": "ชาม", "rd": "chaam", "en": "bowl"}, {"th": "ชั้น", "rd": "chán", "en": "floor / class"}, {"th": "ชาติ", "rd": "châat", "en": "nation"}, {"th": "ซอย", "rd": "sɔɔi", "en": "alley / lane"}, {"th": "ซ้าย", "rd": "sáai", "en": "left"}, {"th": "ซัก", "rd": "sák", "en": "to wash (clothes)"}, {"th": "ซ่อม", "rd": "sɔ̂ɔm", "en": "to repair"}, {"th": "ซื่อ", "rd": "sʉ̂ʉ", "en": "honest"}, {"th": "ซอส", "rd": "sɔ́ɔt", "en": "sauce"}, {"th": "ญาติ", "rd": "yâat", "en": "relative"}, {"th": "หญิง", "rd": "yĭng", "en": "female"}, {"th": "ใหญ่", "rd": "yài", "en": "big"}, {"th": "ญี่ปุ่น", "rd": "yîi-bpùn", "en": "Japan"}, {"th": "คุณภาพ", "rd": "khun-na-phâap", "en": "quality"}, {"th": "เณร", "rd": "neen", "en": "novice monk"}, {"th": "ดิน", "rd": "din", "en": "soil"}, {"th": "ดาบ", "rd": "dàap", "en": "sword"}, {"th": "ดึก", "rd": "dʉ̀k", "en": "late at night"}, {"th": "ตลาด", "rd": "dta-làat", "en": "market"}, {"th": "ตอบ", "rd": "dtɔ̀ɔp", "en": "to answer"}, {"th": "ต้ม", "rd": "dtôm", "en": "to boil"}, {"th": "ถนน", "rd": "tha-nŏn", "en": "road"}, {"th": "ถาม", "rd": "thăam", "en": "to ask"}, {"th": "ถ้วย", "rd": "thûai", "en": "cup"}, {"th": "ถ่าย", "rd": "thàai", "en": "to photograph"}, {"th": "ถัง", "rd": "thăng", "en": "bucket"}, {"th": "เถ้าแก่", "rd": "thâo-gɛ̀ɛ", "en": "boss / owner"}, {"th": "หนู", "rd": "nŭu", "en": "mouse / I (girl)"}, {"th": "หนัง", "rd": "năng", "en": "movie / skin"}, {"th": "น้อง", "rd": "nɔ́ɔng", "en": "younger sibling"}, {"th": "นก", "rd": "nók", "en": "bird"}, {"th": "บิน", "rd": "bin", "en": "to fly"}, {"th": "บ่อย", "rd": "bɔ̀ɔi", "en": "often"}, {"th": "บาง", "rd": "baang", "en": "thin / some"}, {"th": "เป็ด", "rd": "bpèt", "en": "duck"}, {"th": "ปิด", "rd": "bpìt", "en": "to close"}, {"th": "ป้าย", "rd": "bpâai", "en": "sign"}, {"th": "ผัก", "rd": "phàk", "en": "vegetable"}, {"th": "ผี", "rd": "phĭi", "en": "ghost"}, {"th": "ผ้า", "rd": "phâa", "en": "cloth"}, {"th": "ผัด", "rd": "phàt", "en": "to stir-fry"}, {"th": "ฝา", "rd": "făa", "en": "lid"}, {"th": "ฝาก", "rd": "fàak", "en": "to deposit / entrust"}, {"th": "ฝัน", "rd": "făn", "en": "to dream"}, {"th": "ฝุ่น", "rd": "fùn", "en": "dust"}, {"th": "พบ", "rd": "phóp", "en": "to meet"}, {"th": "พัก", "rd": "phák", "en": "to rest"}, {"th": "พา", "rd": "phaa", "en": "to lead / take"}, {"th": "เพลง", "rd": "phleeng", "en": "song"}, {"th": "ฟัน", "rd": "fan", "en": "tooth"}, {"th": "ฟ้า", "rd": "fáa", "en": "sky"}, {"th": "ไฟ", "rd": "fai", "en": "fire / light"}, {"th": "ฟรี", "rd": "frii", "en": "free"}, {"th": "ฟัง", "rd": "fang", "en": "to listen"}, {"th": "ภาษา", "rd": "phaa-săa", "en": "language"}, {"th": "ภาพ", "rd": "phâap", "en": "picture"}, {"th": "ภูเขา", "rd": "phuu-khăo", "en": "mountain"}, {"th": "ภาค", "rd": "phâak", "en": "region / part"}, {"th": "มด", "rd": "mót", "en": "ant"}, {"th": "มาก", "rd": "mâak", "en": "much / very"}, {"th": "รถ", "rd": "rót", "en": "car"}, {"th": "ร้าน", "rd": "ráan", "en": "shop"}, {"th": "รวม", "rd": "ruam", "en": "to combine"}, {"th": "ลา", "rd": "laa", "en": "donkey / to leave"}, {"th": "ลืม", "rd": "lʉʉm", "en": "to forget"}, {"th": "เลข", "rd": "lêek", "en": "number"}, {"th": "ลูก", "rd": "lûuk", "en": "child / ball"}, {"th": "วัด", "rd": "wát", "en": "temple"}, {"th": "ไว", "rd": "wai", "en": "fast"}, {"th": "ว่าง", "rd": "wâang", "en": "free / vacant"}, {"th": "วาด", "rd": "wâat", "en": "to draw"}, {"th": "สวน", "rd": "sŭan", "en": "garden"}, {"th": "ส้ม", "rd": "sôm", "en": "orange"}, {"th": "สิบ", "rd": "sìp", "en": "ten"}, {"th": "สอง", "rd": "sɔ̆ɔng", "en": "two"}, {"th": "ษ", "rd": "sɔ̆ɔ-rʉʉ-sĭi", "en": "saw-ruesi (letter)"}, {"th": "อ้วน", "rd": "ûan", "en": "fat"}, {"th": "อ่าน", "rd": "àan", "en": "to read"}, {"th": "อิ่ม", "rd": "ìm", "en": "full"}, {"th": "อด", "rd": "òt", "en": "to abstain"}, {"th": "ฮา", "rd": "haa", "en": "funny / lol"}, {"th": "ฮัม", "rd": "ham", "en": "to hum"}, {"th": "เฮ", "rd": "hee", "en": "to cheer"}, {"th": "กิน", "rd": "gin", "en": "to eat"}, {"th": "ไก่", "rd": "gài", "en": "chicken"}, {"th": "แก้ว", "rd": "gɛ̂ɛo", "en": "glass"}, {"th": "กลับ", "rd": "glàp", "en": "to return"}, {"th": "ข้าว", "rd": "khâao", "en": "rice"}, {"th": "ไข่", "rd": "khài", "en": "egg"}, {"th": "เขียว", "rd": "khĭao", "en": "green"}, {"th": "ของ", "rd": "khɔ̆ɔng", "en": "thing / of"}, {"th": "เข้า", "rd": "khâo", "en": "to enter"}, {"th": "ใต้", "rd": "dtâai", "en": "under / south"}, {"th": "ที่", "rd": "thîi", "en": "at / place"}, {"th": "หา", "rd": "hăa", "en": "to look for"}, {"th": "ให้", "rd": "hâi", "en": "to give"}, {"th": "หก", "rd": "hòk", "en": "six"}, {"th": "ห้า", "rd": "hâa", "en": "five"}, {"th": "หนาว", "rd": "năao", "en": "cold"}, {"th": "เมฆ", "rd": "mêek", "en": "cloud"}, {"th": "ไม่", "rd": "mâi", "en": "not"}, {"th": "ยาก", "rd": "yâak", "en": "difficult"}, {"th": "ยิ้ม", "rd": "yím", "en": "to smile"}, {"th": "ยืน", "rd": "yʉʉn", "en": "to stand"}, {"th": "ยุ่ง", "rd": "yûng", "en": "busy"}, {"th": "จันทร์", "rd": "jan", "en": "Monday"}, {"th": "อังคาร", "rd": "ang-khaan", "en": "Tuesday"}, {"th": "พุธ", "rd": "phút", "en": "Wednesday"}, {"th": "ศุกร์", "rd": "sùk", "en": "Friday"}, {"th": "เสาร์", "rd": "săo", "en": "Saturday"}, {"th": "ณ", "rd": "ná", "en": "at (formal preposition)"}, {"th": "ทหาร", "rd": "tha-hăan", "en": "soldier"}, {"th": "ปรากฏ", "rd": "bpraa-gòt", "en": "to appear"}, {"th": "กฎ", "rd": "gòt", "en": "rule / law"}, {"th": "กฎหมาย", "rd": "gòt-măai", "en": "law"}, {"th": "ปฏิบัติ", "rd": "bpà-dtì-bàt", "en": "to practice"}, {"th": "ปฏิเสธ", "rd": "bpà-dtì-sèet", "en": "to refuse"}, {"th": "ฐาน", "rd": "thăan", "en": "base"}, {"th": "ฐานะ", "rd": "thăa-ná", "en": "status"}, {"th": "รัฐ", "rd": "rát", "en": "state"}, {"th": "รัฐบาล", "rd": "rát-tha-baan", "en": "government"}, {"th": "สถาน", "rd": "sa-thăan", "en": "place"}, {"th": "สถานี", "rd": "sa-thăa-nii", "en": "station"}, {"th": "พูด", "rd": "phûut", "en": "to speak"}, {"th": "บอก", "rd": "bɔ̀ɔk", "en": "to tell"}, {"th": "เปิด", "rd": "bpə̀ət", "en": "to open"}, {"th": "เริ่ม", "rd": "rə̂əm", "en": "to begin"}, {"th": "จบ", "rd": "jòp", "en": "to finish"}, {"th": "ใช้", "rd": "chái", "en": "to use"}, {"th": "ได้", "rd": "dâai", "en": "can / to get"}, {"th": "ต้อง", "rd": "dtɔ̂ɔng", "en": "must"}, {"th": "อยาก", "rd": "yàak", "en": "to want"}, {"th": "เกลียด", "rd": "glìat", "en": "to hate"}, {"th": "กลัว", "rd": "glua", "en": "to fear"}, {"th": "หวัง", "rd": "wăng", "en": "to hope"}, {"th": "คิดถึง", "rd": "khít-thʉ̆ng", "en": "to miss (someone)"}, {"th": "เชื่อ", "rd": "chʉ̂a", "en": "to believe"}, {"th": "รู้สึก", "rd": "rúu-sʉ̀k", "en": "to feel"}, {"th": "จำได้", "rd": "jam-dâai", "en": "to remember"}, {"th": "สนามบิน", "rd": "sa-năam-bin", "en": "airport"}, {"th": "โรงเรียน", "rd": "roong-rian", "en": "school"}, {"th": "โรงแรม", "rd": "roong-rɛɛm", "en": "hotel"}, {"th": "ธนาคาร", "rd": "tha-naa-khaan", "en": "bank"}, {"th": "ไปรษณีย์", "rd": "bprai-sa-nii", "en": "post office"}, {"th": "ร้านค้า", "rd": "ráan-kháa", "en": "store"}, {"th": "สวนสัตว์", "rd": "sŭan-sàt", "en": "zoo"}, {"th": "แม่น้ำ", "rd": "mɛ̂ɛ-náam", "en": "river"}, {"th": "ป่า", "rd": "bpàa", "en": "forest"}, {"th": "ข้าวผัด", "rd": "khâao-phàt", "en": "fried rice"}, {"th": "ก๋วยเตี๋ยว", "rd": "gŭai-dtĭao", "en": "noodles"}, {"th": "ต้มยำ", "rd": "dtôm-yam", "en": "tom yum"}, {"th": "ส้มตำ", "rd": "sôm-dtam", "en": "papaya salad"}, {"th": "ไก่ทอด", "rd": "gài-thɔ̂ɔt", "en": "fried chicken"}, {"th": "ขนม", "rd": "kha-nŏm", "en": "snack / dessert"}, {"th": "ผลไม้", "rd": "phŏn-la-máai", "en": "fruit"}, {"th": "น้ำแข็ง", "rd": "náam-khɛ̆ng", "en": "ice"}, {"th": "หนึ่ง", "rd": "nʉ̀ng", "en": "one"}, {"th": "สาม", "rd": "săam", "en": "three"}, {"th": "สี่", "rd": "sìi", "en": "four"}, {"th": "เจ็ด", "rd": "jèt", "en": "seven"}, {"th": "แปด", "rd": "bpɛ̀ɛt", "en": "eight"}, {"th": "พัน", "rd": "phan", "en": "thousand"}, {"th": "หมื่น", "rd": "mʉ̀ʉn", "en": "ten thousand"}, {"th": "ล้าน", "rd": "láan", "en": "million"}, {"th": "วันนี้", "rd": "wan-níi", "en": "today"}, {"th": "พรุ่งนี้", "rd": "phrûng-níi", "en": "tomorrow"}, {"th": "เมื่อวาน", "rd": "mʉ̂a-waan", "en": "yesterday"}, {"th": "ตอนเช้า", "rd": "dtɔɔn-cháao", "en": "morning"}, {"th": "ตอนเย็น", "rd": "dtɔɔn-yen", "en": "evening"}, {"th": "กลางคืน", "rd": "glaang-khʉʉn", "en": "night"}, {"th": "ชั่วโมง", "rd": "chûa-moong", "en": "hour"}, {"th": "สัปดาห์", "rd": "sàp-daa", "en": "week"}, {"th": "เก่ง", "rd": "gèng", "en": "skilled"}, {"th": "น่ารัก", "rd": "nâa-rák", "en": "cute"}, {"th": "เล็ก", "rd": "lék", "en": "small"}, {"th": "สูง", "rd": "sŭung", "en": "tall"}, {"th": "เตี้ย", "rd": "dtîa", "en": "short (height)"}, {"th": "เก่า", "rd": "gào", "en": "old (thing)"}, {"th": "มัน", "rd": "man", "en": "it"}, {"th": "นี่", "rd": "nîi", "en": "this"}, {"th": "นั่น", "rd": "nân", "en": "that"}, {"th": "ที่นี่", "rd": "thîi-nîi", "en": "here"}, {"th": "ที่นั่น", "rd": "thîi-nân", "en": "there"}, {"th": "ทำไม", "rd": "tham-mai", "en": "why"}, {"th": "อะไร", "rd": "a-rai", "en": "what"}, {"th": "เมื่อไหร่", "rd": "mʉ̂a-rài", "en": "when"}, {"th": "อย่างไร", "rd": "yàang-rai", "en": "how"}, {"th": "เท่าไหร่", "rd": "thâo-rài", "en": "how much"}];
 
 /* reading -> looped Thai spelling (for the "with-head" comparison after answering) */
@@ -297,14 +513,9 @@ const N_Q = 10;
 const N_CHOICES = 4;
 
 /* ====== Loopless-font confusable distractors ======
-   Goal: train reading the LOOPLESS Thai script, not spot-the-diff on the
-   romanization. So every choice is a DIFFERENT real word whose Thai spelling
-   looks easy to confuse with the target when the head-loops are gone.        */
-
-// Consonant / vowel groups that become hard to tell apart in a LOOPLESS
-// (ไม่มีหัว) display font. Derived directly from the TH3 loopless reference
-// sheet — each red-circled group is kept together, plus the look-alike pairs
-// read off the loopless column.
+   Goal: train reading the LOOPLESS (ไม่มีหัว) Thai script, not spot-the-diff on
+   the romanization. Every choice is a DIFFERENT real word whose Thai spelling
+   looks easy to confuse with the target when the head-loops are gone. */
 const CONFUSE_MAP = {
   "บ":["น", "ป", "ผ", "ฝ", "พ", "ฟ"],
   "ป":["น", "บ", "ผ", "ฝ", "พ", "ฟ"],
@@ -350,40 +561,35 @@ const CONFUSE_MAP = {
 const CONFUSE = {};
 for(const k in CONFUSE_MAP){ CONFUSE[k] = new Set(CONFUSE_MAP[k]); }
 
-// How visually confusable is `cand`'s spelling against `target` in loopless type?
 function confuseScore(target, cand){
   if(cand.th===target.th) return -1;
   const ta=[...target.th], ca=[...cand.th];
   let s=0;
-  s -= Math.abs(ta.length-ca.length)*2;          // similar length = more confusing
+  s -= Math.abs(ta.length-ca.length)*2;
   const setA=new Set(ta), setC=new Set(ca);
-  for(const c of setA) if(setC.has(c)) s+=2;      // shared exact letters
-  for(const c of setA){                            // confusable-pair overlap
+  for(const c of setA) if(setC.has(c)) s+=2;
+  for(const c of setA){
     const twins=CONFUSE[c];
     if(twins){ for(const t of twins) if(setC.has(t)){ s+=3; break; } }
   }
-  if(ta[0]===ca[0]) s+=4;                          // same first letter = deceptive
-  else if(CONFUSE[ta[0]]&&CONFUSE[ta[0]].has(ca[0])) s+=5; // confusable onset = very deceptive
+  if(ta[0]===ca[0]) s+=4;
+  else if(CONFUSE[ta[0]]&&CONFUSE[ta[0]].has(ca[0])) s+=5;
   return s;
 }
 
-/* ====== Build one question ====== */
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
 function makeDistractors(correct, pool){
-  // rank all other real words by loopless-confusability, take a top slice,
-  // then pick from it with a little randomness so quizzes vary.
   const scored = pool
     .filter(w=>w.th!==correct.th && w.rd!==correct.rd)
     .map(w=>({w, s:confuseScore(correct,w)}))
     .sort((a,b)=>b.s-a.s);
-  const topPool = shuffle(scored.slice(0, 12)).map(x=>x.w); // best 12, shuffled
+  const topPool = shuffle(scored.slice(0, 12)).map(x=>x.w);
   const out=[]; const seen=new Set([correct.rd]);
   for(const w of topPool){
     if(out.length>=N_CHOICES-1) break;
     if(!seen.has(w.rd)){ seen.add(w.rd); out.push(w.rd); }
   }
-  // safety fill (rarely needed) with any remaining real words
   if(out.length<N_CHOICES-1){
     for(const x of shuffle(scored).map(s=>s.w)){
       if(out.length>=N_CHOICES-1) break;
@@ -419,16 +625,14 @@ function renderQ(){
   $('bar').style.width=((qi)/N_Q*100)+'%';
   $('thai').textContent=q.w.th;
   const jp=$('jp'); jp.textContent=q.w.en; jp.classList.remove('show');
-  const fb=$('feedback'); fb.className='feedback'; fb.textContent='';
+  const fb=$('feedback'); fb.className='feedback'; fb.innerHTML='';
   $('next').disabled=true;
-  $('next').textContent = (qi===N_Q-1)?'See results →':'Next →';
+  $('next').textContent = (qi===N_Q-1)?'▸ SEE RESULTS':'▸ NEXT';
 
   const box=$('choices'); box.innerHTML='';
   q.choices.forEach((c,i)=>{
     const b=document.createElement('button');
     b.className='choice';
-    // looped (with-head) Thai for the comparison. For the correct choice use the
-    // prompt word's own spelling so homophones never show a mismatched word.
     const looped = (c===q.answer) ? q.w.th : (RD2TH[c] || '');
     b.innerHTML=`<span class="dot">${LETTERS[i]}</span>`
       +`<span class="ctxt">${c}</span>`
@@ -443,17 +647,17 @@ function pick(btn, choice, q){
   locked=true;
   const correct = choice===q.answer;
   const fb=$('feedback');
-  $('jp').classList.add('show'); // reveal meaning as part of explanation
+  $('jp').classList.add('show');
 
   document.querySelectorAll('.choice').forEach(el=>{
     el.classList.add('locked');
     const txt=el.querySelector('.ctxt').textContent;
     if(txt===q.answer){
       el.classList.add('correct');
-      el.querySelector('.looped').classList.add('show'); // reveal looped form on the answer
+      el.querySelector('.looped').classList.add('show');
     } else if(el===btn){
       el.classList.add('wrong');
-      el.querySelector('.looped').classList.add('show'); // and on the wrong pick
+      el.querySelector('.looped').classList.add('show');
     } else {
       el.classList.add('dim');
     }
@@ -463,11 +667,11 @@ function pick(btn, choice, q){
     score++; streak++;
     if(streak>bestStreak) bestStreak=streak;
     fb.className='feedback show ok';
-    fb.innerHTML=`✓ Correct — <span class="ans">${q.answer}</span> <span class="fb-th">${q.w.th}</span>`;
+    fb.innerHTML=`<span class="fb-head">✓ Correct</span> <span class="fb-read">${q.answer}</span> <span class="fb-th">${q.w.th}</span>`;
   }else{
     streak=0;
     fb.className='feedback show no';
-    fb.innerHTML=`✗ Answer: <span class="ans">${q.answer}</span> <span class="fb-th">${q.w.th}</span>`;
+    fb.innerHTML=`<span class="fb-head">✗ Answer</span> <span class="fb-read">${q.answer}</span> <span class="fb-th">${q.w.th}</span>`;
     misses.push({th:q.w.th, you:choice, youTh:RD2TH[choice]||'', cor:q.answer, corTh:q.w.th, en:q.w.en});
   }
   $('score').textContent=score;
@@ -481,30 +685,21 @@ $('next').onclick=()=>{
 };
 
 function showResult(){
-  $('quiz').style.display='none';
-  $('resultScreen').style.display='block';
+  $('quiz').classList.add('hidden');
+  $('resultScreen').classList.remove('hidden');
   $('bar').style.width='100%';
+  window.scrollTo(0,0);
   const pct=Math.round(score/N_Q*100);
-  $('finalScore').textContent=score;
-  $('finalPct').textContent=`${score} / ${N_Q} · ${pct}%`;
-  let v;
-  if(pct===100) v='Flawless — you read every loopless letter right.';
-  else if(pct>=80) v='Strong run — the loopless shapes are clicking.';
-  else if(pct>=50) v='Good progress — keep telling the lookalike letters apart.';
-  else v='Keep drilling — focus on the confusable letter shapes.';
-  $('verdict').textContent=v;
+  $('finalScore').textContent=`${score} / ${N_Q}`;
+  $('finalPct').textContent=`${pct}% correct`;
 
-  /* ---- Achievement based on SCORE (total correct) ----
-     For a 10-question quiz: ≤4 → yuzu · 5–9 → sakura · 10 (perfect) → fireworks.
-     Thresholds scale with quiz length: a perfect score is always fireworks,
-     up to 40% is yuzu, and everything between is sakura.                      */
   const perfect = (score === N_Q);
-  const yuzuCut = Math.floor(N_Q * 0.40);   // 10→4
+  const yuzuCut = Math.floor(N_Q * 0.40);
   let icon, msg, sub;
   if(perfect){
     icon='🎆';
     msg='Fireworks! A true Loopless Font Master';
-    sub=`A perfect ${score} of ${N_Q} — dazzling. The loopless letters hold no secrets from you now. Can you do it again? 🎆`;
+    sub=`A perfect ${score} of ${N_Q} — dazzling. The loopless letters hold no secrets from you now. Can you do it again?`;
   } else if(score <= yuzuCut){
     icon='🍋';
     msg='Fresh start, like a yuzu';
@@ -512,26 +707,25 @@ function showResult(){
   } else {
     icon='🌸';
     msg='In full bloom, like sakura';
-    sub=`${score} of ${N_Q} correct — your eye for the loopless shapes is blossoming. A perfect round turns these petals into fireworks. 🌸`;
+    sub=`${score} of ${N_Q} correct — your eye for the loopless shapes is blossoming. A perfect round turns these petals into fireworks.`;
   }
   $('achieveIcon').textContent=icon;
   $('achieveMsg').textContent=msg;
   $('achieveSub').textContent=sub;
-  // restart the pop animation each time
   const ai=$('achieveIcon'); ai.style.animation='none'; void ai.offsetWidth; ai.style.animation='';
 
   const rev=$('review');
   if(misses.length===0){
     rev.innerHTML='<div class="perfect">No mistakes — nothing to review. 🎉</div>';
   }else{
-    let h='<h3>Review · '+misses.length+' missed</h3>';
+    let h='<div class="review-head">▸ Review · '+misses.length+' missed</div>';
     misses.forEach(m=>{
       h+=`<div class="miss">
         <div class="mth">${m.th}</div>
         <div class="mbody">
-          <div>You: <span class="you">${m.you}</span> <span class="rv-th you-th">${m.youTh||''}</span></div>
-          <div>Correct: <span class="cor">${m.cor}</span> <span class="rv-th cor-th">${m.corTh||''}</span></div>
-          <div class="jp">${m.en}</div>
+          <div>You: <span class="you">${m.you}</span></div>
+          <div>Correct: <span class="cor">${m.cor}</span></div>
+          <div>${m.en}</div>
         </div>
       </div>`;
     });
@@ -539,14 +733,42 @@ function showResult(){
   }
 }
 
-$('again').onclick=()=>{
-  $('resultScreen').style.display='none';
-  $('quiz').style.display='block';
+/* ====== Screen flow ====== */
+function startGame(){
+  $('startScreen').classList.add('hidden');
+  $('resultScreen').classList.add('hidden');
+  $('quiz').classList.remove('hidden');
+  window.scrollTo(0,0);
   buildQuiz(); renderQ();
-};
+}
+function toMenu(){
+  $('quiz').classList.add('hidden');
+  $('resultScreen').classList.add('hidden');
+  $('startScreen').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
 
-/* init */
-buildQuiz(); renderQ();
+$('startBtn').onclick = startGame;
+$('again').onclick = startGame;
+$('quitBtn').onclick = toMenu;
+$('menuBtn').onclick = toMenu;
+
+/* ====== Embers (forge ambiance) ====== */
+(function(){
+  const host=$('embers');
+  if(!host) return;
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const N=22;
+  for(let i=0;i<N;i++){
+    const e=document.createElement('span');
+    e.className='ember'+(Math.random()<0.4?' spark':'');
+    e.style.left=(Math.random()*100)+'%';
+    e.style.animationDuration=(6+Math.random()*7)+'s';
+    e.style.animationDelay=(-Math.random()*10)+'s';
+    e.style.setProperty('--drift',((Math.random()*40)-20)+'px');
+    host.appendChild(e);
+  }
+})();
 </script>
 </body>
 </html>
